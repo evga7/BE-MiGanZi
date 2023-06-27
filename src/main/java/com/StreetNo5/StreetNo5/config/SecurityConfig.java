@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests()
-                .requestMatchers ("/user/**","/board/**","/swagger-ui/**", "/v3/api-docs/**").permitAll ()
+                .requestMatchers ("/user/**","/board","/swagger-ui/**", "/v3/api-docs/**").permitAll ()
                 //.requestMatchers("/board").hasRole("USER")
                 .and()
                 .cors().configurationSource(corsConfigurationSource())
