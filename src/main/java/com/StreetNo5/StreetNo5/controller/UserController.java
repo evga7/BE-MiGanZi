@@ -15,23 +15,26 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private final UserService service;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<String> loginSuccess(String nickname) {
-        String token = service.login(nickname);
+        String token = userService.login(nickname);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/signup")
     @CrossOrigin(originPatterns = "http://localhost:3000")
-    public Long signup(SignupForm signupForm) {
-        return service.signup(signupForm);
+    public String signup(SignupForm signupForm) {
+        if (userService.checkNickNameExists(signupForm.getNickname())==false){
+            return "NO";
+        }
+        return "OK";
     }
 
     @GetMapping("/check/{nickname}")
     public ResponseEntity<Boolean> checkNickNameDuplicate(@PathVariable String nickname) {
-        return ResponseEntity.ok(service.checkNickNameExists(nickname));
+        return ResponseEntity.ok(userService.checkNickNameExists(nickname));
     }
 
 
