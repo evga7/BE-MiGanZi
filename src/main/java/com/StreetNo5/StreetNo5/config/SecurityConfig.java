@@ -23,9 +23,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    @Value("${miganzi.url}")
+    @Value("${MIGANZI_URL}")
     private String allowedOrigin;
-    @Value ("${miganzi.url2}")
+    @Value ("${MIGANZI_URL2}")
     private String allowedOrigin2;
     @Bean
     public BCryptPasswordEncoder encoder() {
