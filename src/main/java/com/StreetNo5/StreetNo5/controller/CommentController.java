@@ -17,10 +17,10 @@ public class CommentController {
     private final UserPostService userPostService;
 
     @PostMapping("/board/user/comment")
-    public String write_comment(UserComment userComment,Long id){
-        UserPost userPost = userPostService.getUserPost(id);
+    public String write_comment(UserComment userComment,Long post_id){
+        UserPost userPost = userPostService.getUserPost(post_id);
         userPost.addComment(userComment);
-        userPostService.updateCommentCount(id);
+        userPostService.updateCommentCount(post_id);
         commentService.write_comment(userComment);
         return "OK";
     }
