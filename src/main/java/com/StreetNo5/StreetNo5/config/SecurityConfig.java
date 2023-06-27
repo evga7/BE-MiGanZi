@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .requestMatchers ("/user/**","/board/**","/swagger-ui/**", "/v3/api-docs/**").permitAll ()
                 //.requestMatchers("/board").hasRole("USER")
                 .and()
+                .cors()
+                .and()
                 .requiresChannel().anyRequest().requiresSecure()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
