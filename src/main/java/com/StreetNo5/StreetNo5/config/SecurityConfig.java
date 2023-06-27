@@ -4,7 +4,6 @@ package com.StreetNo5.StreetNo5.config;
 import com.StreetNo5.StreetNo5.config.jwt.JwtAuthenticationFilter;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,10 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    @Value("${MIGANZI.URL}")
-    private String allowedOrigin;
-    @Value ("${MIGANZI.URL2}")
-    private String allowedOrigin2;
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -54,8 +49,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(allowedOrigin);
-        configuration.addAllowedOrigin(allowedOrigin2);
+        configuration.addAllowedOrigin("https://miganzi.vercel.app");
+        configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
