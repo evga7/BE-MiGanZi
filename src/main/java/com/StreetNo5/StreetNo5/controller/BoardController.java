@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BoardController {
 
-
-
     private final UserPostService userPostService;
     @GetMapping("/board")
     public Slice<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
@@ -28,6 +26,7 @@ public class BoardController {
         userPostService.updateView(id);
         return userPostService.getUserPost(id);
     }
+
 
 
 

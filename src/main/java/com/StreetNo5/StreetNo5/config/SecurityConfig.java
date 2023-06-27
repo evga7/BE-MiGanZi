@@ -24,9 +24,9 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     @Value("${miganzi.url}")
-    private final String allowedOrigin;
+    private String allowedOrigin;
     @Value ("${miganzi.url2}")
-    private final String allowedOrigin2;
+    private String allowedOrigin2;
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
