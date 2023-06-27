@@ -11,13 +11,13 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class PostTag {
+public class UserPostTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
     private Long id;
-    private String tag_name;
+    private String tagname;
 
     @ManyToOne
     @JoinColumn(name = "post_id")

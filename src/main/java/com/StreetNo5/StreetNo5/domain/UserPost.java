@@ -40,7 +40,7 @@ public class UserPost extends BaseTimeEntity{
         userComment.setUserPost(this);
     }
 
-    public void addTag(PostTag postTag)
+    public void addTag(UserPostTag postTag)
     {
         postTags.add(postTag);
         postTag.setUserPost(this);
@@ -52,7 +52,7 @@ public class UserPost extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<PostTag> postTags=new ArrayList<>();
+    private List<UserPostTag> postTags=new ArrayList<>();
 
 
 }
