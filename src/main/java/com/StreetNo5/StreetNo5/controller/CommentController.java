@@ -6,17 +6,16 @@ import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
+
 public class CommentController {
     private final CommentService commentService;
     private final UserPostService userPostService;
-    @PostMapping("/board/comment")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/board/user/comment")
     public String write_comment(UserComment userComment,Long id){
         UserPost userPost = userPostService.getUserPost(id);
         userPost.addComment(userComment);

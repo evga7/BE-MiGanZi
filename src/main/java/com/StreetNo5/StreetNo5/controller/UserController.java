@@ -23,11 +23,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(SignupForm signupForm) {
-        if (userService.checkNickNameExists(signupForm.getNickname())==false){
-            return "NO";
-        }
-        return "OK";
+    public Long signup(SignupForm signupForm) {
+        return userService.signup(signupForm);
     }
 
     @GetMapping("/check/{nickname}")
