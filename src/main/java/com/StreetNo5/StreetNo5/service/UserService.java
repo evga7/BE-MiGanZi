@@ -28,7 +28,7 @@ public class UserService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-    @Value("${TEMP.PASSWORD}")
+    @Value("${temp.password}")
     private String tempPassWord;
 
 
