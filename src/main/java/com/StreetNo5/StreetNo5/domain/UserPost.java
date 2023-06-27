@@ -23,6 +23,9 @@ public class UserPost extends BaseTimeEntity{
     private String title;
     private String content;
     private String imageUrl;
+    private String lat;
+    private String lng;
+    private String address_name;
 
     @Builder
     public UserPost(String nickname, String title, String content,String imageUrl) {
@@ -37,9 +40,19 @@ public class UserPost extends BaseTimeEntity{
         userComment.setUserPost(this);
     }
 
+    public void addTag(PostTag postTag)
+    {
+        postTags.add(postTag);
+        postTag.setUserPost(this);
+    }
+
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<UserComment> userComments=new ArrayList<>();
+
+    @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<PostTag> postTags=new ArrayList<>();
 
 
 }
