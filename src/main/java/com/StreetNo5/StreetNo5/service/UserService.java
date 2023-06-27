@@ -8,6 +8,7 @@ import com.StreetNo5.StreetNo5.domain.Users;
 import com.StreetNo5.StreetNo5.domain.dtos.SignupForm;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,6 +28,8 @@ public class UserService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    @Value("${TEMP_PASSWORD}")
+    private String tempPassWord;
 
 
     public String login(String nickname) {
@@ -49,7 +52,7 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 유저입니다.");
         }
 
-        String encPwd = encoder.encode("1234");
+        String encPwd = encoder.encode(tempPassWord);
 
         Users user = repository.save(signupForm.toEntity(encPwd));
 

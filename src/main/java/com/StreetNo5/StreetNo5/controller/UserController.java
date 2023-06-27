@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@CrossOrigin(originPatterns = "https://miganzi.vercel.app/")
 public class UserController {
 
     @Autowired
@@ -24,7 +23,6 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    @CrossOrigin(originPatterns = "http://localhost:3000")
     public String signup(SignupForm signupForm) {
         if (userService.checkNickNameExists(signupForm.getNickname())==false){
             return "NO";
