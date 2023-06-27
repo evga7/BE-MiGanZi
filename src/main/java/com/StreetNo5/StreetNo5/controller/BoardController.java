@@ -3,12 +3,13 @@ package com.StreetNo5.StreetNo5.controller;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,8 +18,8 @@ public class BoardController {
 
     private final UserPostService userPostService;
     @GetMapping("/board")
-    public Slice<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
-        Slice<UserPost> userPosts = userPostService.getUserPosts(pageable);
+    public Page<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
+        Page<UserPost> userPosts = userPostService.getUserPosts(pageable);
         return userPosts;
     }
     @GetMapping("/board/{id}")
@@ -26,6 +27,19 @@ public class BoardController {
         userPostService.updateView(id);
         return userPostService.getUserPost(id);
     }
+    @PostMapping("/board/user/post")
+    public String writePost(UserPost userPost){
+        UserPost post = UserPost.builder()
+                .title(userPost.getTitle())
+                .nickname(userPost.getNickname())
+                .content(userPost.getContent())
+                .build();
+        userPostService.writePost(post);
+        return "OK";
+
+
+    }
+
 
 
 

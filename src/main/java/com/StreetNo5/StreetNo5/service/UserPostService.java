@@ -3,8 +3,8 @@ package com.StreetNo5.StreetNo5.service;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserPostService {
     private final BoardRepository boardRepository;
-    public Slice<UserPost> getUserPosts(Pageable pageable){
+    public Page<UserPost> getUserPosts(Pageable pageable){
         return boardRepository.findSliceBy(pageable);
     }
     public UserPost getUserPost(Long id){
@@ -28,5 +28,8 @@ public class UserPostService {
     public void updateCommentCount(Long id)
     {
         boardRepository.upCommentCount(id);
+    }
+    public void writePost(UserPost userPost){
+        boardRepository.save(userPost);
     }
 }

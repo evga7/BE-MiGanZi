@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
     private final CommentService commentService;
     private final UserPostService userPostService;
+
     @PostMapping("/board/user/comment")
     public String write_comment(UserComment userComment,Long id){
         UserPost userPost = userPostService.getUserPost(id);
