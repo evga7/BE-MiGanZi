@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers ("/user/**","/board/**","/swagger-ui/**", "/v3/api-docs/**").permitAll ()
                 //.requestMatchers("/board").hasRole("USER")
                 .and()
-                .cors()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .requiresChannel().anyRequest().requiresSecure()
                 .and()
