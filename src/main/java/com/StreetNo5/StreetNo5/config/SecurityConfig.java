@@ -47,6 +47,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("https://miganzi.vercel.app");
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedHeader("*");
