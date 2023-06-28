@@ -39,6 +39,7 @@ public class BoardController {
                 .content(userPost.getContent())
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
+                .tags(userPost.getTags())
                 .build();
         userPostService.writePost(post);
         return "OK";

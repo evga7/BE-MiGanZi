@@ -1,7 +1,6 @@
 package com.StreetNo5.StreetNo5.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,13 +14,8 @@ public class UserPostTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tag_id")
     private Long id;
-    private String tagname;
+    private String tagName;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    @JsonBackReference
-    private UserPost userPost;
 
 }
