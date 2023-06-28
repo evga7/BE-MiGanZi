@@ -30,9 +30,10 @@ public class UserPost extends BaseTimeEntity{
     private Double lng;
     private String address_name;
     private String tags;
+    private String music_id;
 
     @Builder
-    public UserPost(String nickname, String title, String content,String imageUrl,Double lat,Double lng,String address_name,String tags) {
+    public UserPost(String nickname, String title, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id) {
         this.nickname=nickname;
         this.title=title;
         this.content=content;
@@ -41,6 +42,7 @@ public class UserPost extends BaseTimeEntity{
         this.lng=lng;
         this.tags=tags;
         this.address_name=address_name;
+        this.music_id=music_id;
 
     }
     public void addComment(UserComment userComment)

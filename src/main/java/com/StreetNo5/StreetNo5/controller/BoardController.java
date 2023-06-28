@@ -48,6 +48,7 @@ public class BoardController {
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
+                .music_id(userPost.getMusic_id())
                 .build();
         userPostService.writePost(post);
         return "OK";
