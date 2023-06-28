@@ -30,7 +30,11 @@ public class UserController {
         return userService.signup(signupForm);
     }
 
-    @Operation(summary = "닉네임 조건 확인 API")
+    @Operation(summary = "닉네임 조건 확인 API",description = "반환값 String, 닉네임 존재시 extis," +
+            "빈값 empty," +
+            "8글자 이상 length," +
+            "특수문자나 닉네임 원칙 안맞으면 notMatch , " +
+            "정상적일시 OK 반환 입니다 그냥 OK 이외에는 다 안되는 값이라고 판한해서 값을 return 합니다.")
     @GetMapping("/check/{nickname}")
     public String checkNickNameDuplicate(@PathVariable String nickname) {
         boolean matches = nickname.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*");

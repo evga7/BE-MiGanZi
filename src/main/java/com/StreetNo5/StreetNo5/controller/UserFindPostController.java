@@ -3,6 +3,7 @@ package com.StreetNo5.StreetNo5.controller;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dtos.UserPositionDto;
 import com.StreetNo5.StreetNo5.service.UserPostService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import java.util.List;
 public class UserFindPostController {
     private final UserPostService userPostService;
 
+    @Operation(summary = "주변 게시물 찾기 API")
     @PostMapping("/find-near-post")
     public List<UserPost> getBoardListFromUserSearch(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC) Pageable pageable,
                                                      UserPositionDto userPositionDto) {
