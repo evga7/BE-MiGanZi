@@ -7,27 +7,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/user/board")
 @RequiredArgsConstructor
 public class BoardController {
 
     private final UserPostService userPostService;
-    @GetMapping("/board")
+    @GetMapping("/")
     public Page<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
         Page<UserPost> userPosts = userPostService.getUserPosts(pageable);
         return userPosts;
     }
-    @GetMapping("/board/{id}")
+    @GetMapping("/{id}")
     public UserPost getPost(@PathVariable Long id) {
         userPostService.updateView(id);
         return userPostService.getUserPost(id);
     }
-    @PostMapping("/board/user/post")
+    @PostMapping("/post")
     public String writePost(UserPost userPost){
         UserPost post = UserPost.builder()
                 .title(userPost.getTitle())
@@ -37,11 +35,10 @@ public class BoardController {
         userPostService.writePost(post);
         return "OK";
 
-
     }
 
 
 
 
-
 }
+

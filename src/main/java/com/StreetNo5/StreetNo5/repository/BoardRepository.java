@@ -23,4 +23,6 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
 
 
 
+
+
 }

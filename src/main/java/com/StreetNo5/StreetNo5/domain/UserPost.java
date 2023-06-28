@@ -23,9 +23,9 @@ public class UserPost extends BaseTimeEntity{
     private String title;
     private String content;
     private String imageUrl;
-    private String lat;
-    private String lng;
-    private String address_name;
+    @OneToOne
+    @JoinColumn
+    private UserPositionInfo userPositionInfo;
 
     @Builder
     public UserPost(String nickname, String title, String content,String imageUrl) {
