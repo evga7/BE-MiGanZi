@@ -1,7 +1,6 @@
 package com.StreetNo5.StreetNo5.domain.dtos;
 
 
-import com.StreetNo5.StreetNo5.domain.UserPositionInfo;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +22,9 @@ public class UserPostDto {
     private String createdAt;
     private String modifiedAt;
     private List<UserPostCommentDto> comments;
-    private UserPositionInfo userPositionInfo;
+    private Double lat;
+    private Double lng;
+    private String address_name;
 
 
 }

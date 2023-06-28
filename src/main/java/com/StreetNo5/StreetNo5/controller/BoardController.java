@@ -31,6 +31,8 @@ public class BoardController {
                 .title(userPost.getTitle())
                 .nickname(userPost.getNickname())
                 .content(userPost.getContent())
+                .lat(userPost.getLat())
+                .lng(userPost.getLng())
                 .build();
         userPostService.writePost(post);
         return "OK";

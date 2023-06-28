@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/user/board")
 @RequiredArgsConstructor
 public class UserFindPostController {
@@ -26,7 +26,7 @@ public class UserFindPostController {
         List<UserPost> userPostData= userPostService.getUserPostList();
         List<UserPost> userPostList = new ArrayList<>();
         for (int i=0;i<userPostData.size();i++){
-            if (getDistance(userPositionDto.getLat(),userPositionDto.getLng(),userPostData.get(i).getUserPositionInfo().getLat(),userPostData.get(i).getUserPositionInfo().getLng())<=2){
+            if (getDistance(userPositionDto.getLat(),userPositionDto.getLng(),userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2){
                 userPostList.add(userPostData.get(i));
             }
         }

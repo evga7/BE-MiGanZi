@@ -23,16 +23,20 @@ public class UserPost extends BaseTimeEntity{
     private String title;
     private String content;
     private String imageUrl;
-    @OneToOne
-    @JoinColumn
-    private UserPositionInfo userPositionInfo;
+    private Double lat;
+    private Double lng;
+    private String address_name;
 
     @Builder
-    public UserPost(String nickname, String title, String content,String imageUrl) {
+    public UserPost(String nickname, String title, String content,String imageUrl,Double lat,Double lng,String address_name) {
         this.nickname=nickname;
         this.title=title;
         this.content=content;
         this.imageUrl=imageUrl;
+        this.lat=lat;
+        this.lng=lng;
+        this.address_name=address_name;
+
     }
     public void addComment(UserComment userComment)
     {
