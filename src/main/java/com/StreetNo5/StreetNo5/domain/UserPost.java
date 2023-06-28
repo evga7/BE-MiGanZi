@@ -2,6 +2,7 @@ package com.StreetNo5.StreetNo5.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,9 @@ public class UserPost extends BaseTimeEntity{
     private String nickname;
     private Long viewCount=0L;
     private Long commentCount=0L;
+    @Size(min = 2,max = 30,message = "제목을 2~30자 사이로 입력해주세요.")
     private String title;
+    @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
     private String content;
     private String imageUrl;
     private Double lat;
