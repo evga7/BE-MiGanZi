@@ -37,6 +37,8 @@ dependencies {
 	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 
 
+
+
 	//gcp
 	implementation("com.google.cloud:spring-cloud-gcp-starter-storage")
 

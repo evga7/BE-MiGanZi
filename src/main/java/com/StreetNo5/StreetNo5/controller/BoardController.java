@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
+
 @RestController
 @RequestMapping("/user/board")
 @RequiredArgsConstructor
@@ -32,10 +34,16 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post")
-    public String writePost(UserPost userPost){
+    public String writePost(UserPost userPost,@RequestHeader(value = "Authorization") String token){
+
+        Base64.Decoder decoder = Base64.getDecoder();
+        final String[] splitJwt = token.split("\\.");
+        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
+        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+
         UserPost post = UserPost.builder()
                 .title(userPost.getTitle())
-                .nickname(userPost.getNickname())
+                .nickname(nickname)
                 .content(userPost.getContent())
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
