@@ -5,6 +5,7 @@ import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class CommentController {
     private final CommentService commentService;
     private final UserPostService userPostService;
 
+    @Operation(summary = "댓글 작성 API")
     @PostMapping("/comment")
     public String write_comment(UserComment userComment,Long post_id){
         UserPost userPost = userPostService.getUserPost(post_id);
