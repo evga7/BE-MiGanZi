@@ -4,8 +4,8 @@ import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +21,8 @@ public class BoardController {
 
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
-    public Page<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
-        Page<UserPost> userPosts = userPostService.getUserPosts(pageable);
+    public Slice<UserPost> getBoardList(@PageableDefault(size = 5,sort = "createdDate",direction = Sort.Direction.ASC)Pageable pageable) {
+        Slice<UserPost> userPosts = userPostService.getUserPosts(pageable);
         return userPosts;
     }
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
