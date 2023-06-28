@@ -20,7 +20,7 @@ public class BoardController {
     private final UserPostService userPostService;
 
     @Operation(summary = "전체 게시물 조회 API")
-    @GetMapping("/")
+    @GetMapping("/posts")
     public Page<UserPost> getBoardList(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC)Pageable pageable) {
         Page<UserPost> userPosts = userPostService.getUserPosts(pageable);
         return userPosts;
