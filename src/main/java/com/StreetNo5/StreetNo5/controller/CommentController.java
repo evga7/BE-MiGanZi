@@ -8,8 +8,12 @@ import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Base64;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/user/board")
@@ -21,12 +25,21 @@ public class CommentController {
 
     @Operation(summary = "댓글 작성 API")
     @PostMapping("/comment")
-    public String write_comment(UserComment userComment,Long post_id){
+    public List<UserComment> write_comment(UserComment userComment,Long post_id,@RequestHeader(value = "Authorization") String token){
         UserPost userPost = userPostService.getUserPost(post_id);
+        userComment.setNickname(getUserNicknameFromJwtToken(token));
         userPost.addComment(userComment);
+        List<UserComment> userComments = userPost.getUserComments();
         userPostService.updateCommentCount(post_id);
         commentService.write_comment(userComment);
-        return "OK";
+        return userComments;
+    }
+    private String getUserNicknameFromJwtToken(String token) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        final String[] splitJwt = token.split("\\.");
+        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
+        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+        return nickname;
     }
 
 }

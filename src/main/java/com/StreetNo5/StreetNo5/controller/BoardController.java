@@ -40,10 +40,7 @@ public class BoardController {
     @PostMapping("/post")
     public String writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
 
-        Base64.Decoder decoder = Base64.getDecoder();
-        final String[] splitJwt = token.split("\\.");
-        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
-        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+        String nickname = getUserNicknameFromJwtToken(token);
         String imageUrl = gcsService.updateMemberInfo(imageFile);
         UserPost post = UserPost.builder()
                 .nickname(nickname)
@@ -59,7 +56,13 @@ public class BoardController {
 
     }
 
-
+    private String getUserNicknameFromJwtToken(String token) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        final String[] splitJwt = token.split("\\.");
+        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
+        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+        return nickname;
+    }
 
 
 }
