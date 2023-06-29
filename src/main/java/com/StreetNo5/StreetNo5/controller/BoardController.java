@@ -1,6 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Base64;
 
 @RestController
@@ -18,6 +21,7 @@ import java.util.Base64;
 public class BoardController {
 
     private final UserPostService userPostService;
+    private final GCSService gcsService;
 
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
@@ -34,17 +38,17 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post")
-    public String writePost(UserPost userPost,@RequestHeader(value = "Authorization") String token){
+    public String writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
 
         Base64.Decoder decoder = Base64.getDecoder();
         final String[] splitJwt = token.split("\\.");
         final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
         String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
-
+        String imageUrl = gcsService.updateMemberInfo(imageFile);
         UserPost post = UserPost.builder()
-                .title(userPost.getTitle())
                 .nickname(nickname)
                 .content(userPost.getContent())
+                .imageUrl(imageUrl)
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())

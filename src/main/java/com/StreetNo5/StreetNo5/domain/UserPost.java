@@ -21,8 +21,6 @@ public class UserPost extends BaseTimeEntity{
     private String nickname;
     private Long viewCount=0L;
     private Long commentCount=0L;
-    @Size(min = 2,max = 30,message = "제목을 2~30자 사이로 입력해주세요.")
-    private String title;
     @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
     private String content;
     private String imageUrl;
@@ -33,9 +31,8 @@ public class UserPost extends BaseTimeEntity{
     private String music_id;
 
     @Builder
-    public UserPost(String nickname, String title, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id) {
+    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id) {
         this.nickname=nickname;
-        this.title=title;
         this.content=content;
         this.imageUrl=imageUrl;
         this.lat=lat;
