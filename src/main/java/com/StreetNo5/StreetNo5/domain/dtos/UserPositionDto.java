@@ -9,5 +9,6 @@ public class UserPositionDto {
     private Double lat;
     private Double lng;
     private String address_name;
+    private String tags;
 
 }

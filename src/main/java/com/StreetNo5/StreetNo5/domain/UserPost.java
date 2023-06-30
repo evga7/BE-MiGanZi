@@ -28,16 +28,18 @@ public class UserPost extends BaseTimeEntity{
     private Double lng;
     private String address_name;
     private String tags;
+    private Long tagsNum;
     private String music_id;
 
     @Builder
-    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id) {
+    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id,Long tags_num) {
         this.nickname=nickname;
         this.content=content;
         this.imageUrl=imageUrl;
         this.lat=lat;
         this.lng=lng;
         this.tags=tags;
+        this.tagsNum =tags_num;
         this.address_name=address_name;
         this.music_id=music_id;
 

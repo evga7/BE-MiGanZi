@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +22,15 @@ public class UserFindPostController {
     private final UserPostService userPostService;
 
     @Operation(summary = "주변 게시물 찾기 API")
-    @PostMapping("/find-near-post")
-    public List<UserPost> getBoardListFromUserSearch(@PageableDefault(size = 5,sort = "id",direction = Sort.Direction.ASC) Pageable pageable,
+    @GetMapping("/find-near-post")
+    public List<UserPost> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
                                                      UserPositionDto userPositionDto) {
         List<UserPost> userPostData= userPostService.getUserPostList();
         List<UserPost> userPostList = new ArrayList<>();
+        Long tags_num=convertTags(userPositionDto.getTags());
         for (int i=0;i<userPostData.size();i++){
-            if (getDistance(userPositionDto.getLat(),userPositionDto.getLng(),userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2){
+            if (getDistance(userPositionDto.getLat(),userPositionDto.getLng(),userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2
+                    && ((tags_num&userPostData.get(i).getTagsNum()))==tags_num){
                 userPostList.add(userPostData.get(i));
             }
         }
@@ -55,6 +57,9 @@ public class UserFindPostController {
         return (rad * 180 / Math.PI);
     }
 
+    private Long convertTags(String tags){
+        return Long.parseLong(tags,2);
+    }
 
 
 }

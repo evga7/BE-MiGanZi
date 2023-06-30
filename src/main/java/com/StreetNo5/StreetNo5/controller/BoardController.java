@@ -57,6 +57,7 @@ public class BoardController {
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
+                .tags_num(convertTags(userPost.getTags()))
                 .music_id(userPost.getMusic_id())
                 .build();
         userPostService.writePost(post);
@@ -70,6 +71,9 @@ public class BoardController {
         final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
         String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
         return nickname;
+    }
+    private Long convertTags(String tags){
+        return Long.parseLong(tags,2);
     }
 
 
