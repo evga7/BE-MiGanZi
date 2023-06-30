@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface BoardRepository extends JpaRepository<UserPost,Long> {
     @Transactional
     @Modifying
@@ -20,6 +22,9 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
     void upCommentCount(@Param("id") Long id);
 
     Slice<UserPost> findSliceBy(Pageable pageable);
+
+    @Query(value = "select * from user_post order by view_count desc limit 5",nativeQuery = true)
+    List<UserPost> findPolarPost();
 
 
 

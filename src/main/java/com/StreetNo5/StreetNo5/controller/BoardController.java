@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user/board")
@@ -25,9 +26,16 @@ public class BoardController {
 
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
-    public Slice<UserPost> getBoardList(@PageableDefault(size = 5,sort = "createdDate",direction = Sort.Direction.ASC)Pageable pageable) {
+    public Slice<UserPost> getBoardList(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC)Pageable pageable) {
         Slice<UserPost> userPosts = userPostService.getUserPosts(pageable);
         return userPosts;
+    }
+
+    @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
+    @GetMapping("/popular-post")
+    public List<UserPost> getPopularPost()
+    {
+        return userPostService.getUserPolarPost();
     }
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
     @GetMapping("/{id}")

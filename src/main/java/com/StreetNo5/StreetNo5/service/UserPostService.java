@@ -36,4 +36,7 @@ public class UserPostService {
     public List<UserPost>getUserPostList(){
         return boardRepository.findAll();
     }
+    public List<UserPost>getUserPolarPost(){
+        return boardRepository.findPolarPost();
+    }
 }
