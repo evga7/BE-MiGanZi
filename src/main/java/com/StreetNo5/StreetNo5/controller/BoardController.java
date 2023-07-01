@@ -33,13 +33,7 @@ public class BoardController {
     }
 
     private Slice<UserPostsDto> getUserPostsDto(Pageable pageable, List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = new ArrayList<>();
-        for (UserPost userPost : userPosts){
-            UserPostsDto userPostsDto=new UserPostsDto();
-            userPostsDto.setId(userPost.getId());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
-            userPostsLists.add(userPostsDto);
-        }
+        List<UserPostsDto> userPostsLists = ConvertDto(userPosts);
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
         boolean hasNext = false;
@@ -50,12 +44,24 @@ public class BoardController {
         return slice;
     }
 
+    private List<UserPostsDto> ConvertDto(List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = new ArrayList<>();
+        for (UserPost userPost : userPosts){
+            UserPostsDto userPostsDto=new UserPostsDto();
+            userPostsDto.setId(userPost.getId());
+            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsLists.add(userPostsDto);
+        }
+        return userPostsLists;
+    }
+
     @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
     @GetMapping("/popular-post")
-    public List<UserPost> getPopularPost()
+    public List<UserPostsDto> getPopularPost()
     {
-        return userPostService.getUserPolarPost();
+        return ConvertDto(userPostService.getUserPolarPost());
     }
+
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
     @GetMapping("/{id}")
     public UserPost getPost(@PathVariable Long id) {
