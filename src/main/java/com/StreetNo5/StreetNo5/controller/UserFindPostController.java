@@ -4,6 +4,7 @@ import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -26,7 +27,7 @@ public class UserFindPostController {
 
     @Operation(summary = "주변 게시물 찾기 API")
     @GetMapping("/find-near-post/{lat}/{lng}/{tags}")
-    public Slice<UserPostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable
+    public Slice<UserPostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable
     ,@PathVariable Double lat,@PathVariable Double lng,@PathVariable String tags) {
         List<UserPost> userPostData= userPostService.getUserPostList();
         List<UserPost> userPostList = new ArrayList<>();

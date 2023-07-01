@@ -5,6 +5,7 @@ import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +28,7 @@ public class BoardController {
 
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
-    public Slice<UserPostsDto> getBoardList(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC)Pageable pageable) {
+    public Slice<UserPostsDto> getBoardList(@PageableDefault (size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable) {
         List<UserPost> userPosts = userPostService.getUserPosts();
         return getUserPostsDto(pageable,userPosts);
     }
