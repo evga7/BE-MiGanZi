@@ -7,6 +7,7 @@ import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class CommentController {
     private final UserPostService userPostService;
 
     @Operation(summary = "댓글 작성 API")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/comment")
     public List<UserComment> write_comment(UserComment userComment,Long post_id,@RequestHeader(value = "Authorization") String token){
         UserPost userPost = userPostService.getUserPost(post_id);
