@@ -1,14 +1,17 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dtos.UserPositionDto;
+import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,19 +25,19 @@ public class UserFindPostController {
     private final UserPostService userPostService;
 
     @Operation(summary = "주변 게시물 찾기 API")
-    @PostMapping("/find-near-post")
-    public List<UserPost> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
-                                                     UserPositionDto userPositionDto) {
+    @GetMapping("/find-near-post/{lat}/{lng}/{tags}")
+    public Slice<UserPostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable
+    ,@PathVariable Double lat,@PathVariable Double lng,@PathVariable String tags) {
         List<UserPost> userPostData= userPostService.getUserPostList();
         List<UserPost> userPostList = new ArrayList<>();
-        Long tags_num=convertTags(userPositionDto.getTags());
+        Long tags_num=convertTags(tags);
         for (int i=0;i<userPostData.size();i++){
-            if (getDistance(userPositionDto.getLat(),userPositionDto.getLng(),userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2
+            if (getDistance(lat,lng,userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2
                     && ((tags_num&userPostData.get(i).getTagsNum()))==tags_num){
                 userPostList.add(userPostData.get(i));
             }
         }
-        return userPostList;
+        return getUserPostsDto(pageable,userPostList);
     }
 
     // km 기준
@@ -59,6 +62,24 @@ public class UserFindPostController {
 
     private Long convertTags(String tags){
         return Long.parseLong(tags,2);
+    }
+
+    private Slice<UserPostsDto> getUserPostsDto(Pageable pageable, List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = new ArrayList<>();
+        for (UserPost userPost : userPosts){
+            UserPostsDto userPostsDto=new UserPostsDto();
+            userPostsDto.setId(userPost.getId());
+            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsLists.add(userPostsDto);
+        }
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
+        boolean hasNext = false;
+        if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
+            hasNext = true;
+        }
+        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
+        return slice;
     }
 
 
