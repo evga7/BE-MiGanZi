@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Getter
 @Entity
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -31,8 +30,11 @@ public class UserPost extends BaseTimeEntity{
     private Long tagsNum;
     private String music_id;
 
+
+
     @Builder
-    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name,String tags,String music_id,Long tags_num) {
+    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name
+            ,String tags,String music_id,Long tags_num) {
         this.nickname=nickname;
         this.content=content;
         this.imageUrl=imageUrl;
@@ -53,6 +55,7 @@ public class UserPost extends BaseTimeEntity{
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<UserComment> userComments=new ArrayList<>();
+
 
 
 

@@ -27,12 +27,14 @@ public class CommentController {
     @Operation(summary = "댓글 작성 API")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/comment")
-    public List<UserComment> write_comment(UserComment userComment,Long post_id,@RequestHeader(value = "Authorization") String token){
-        UserPost userPost = userPostService.getUserPost(post_id);
+    public List<UserComment> write_comment(Long postId,String content,@RequestHeader(value = "Authorization") String token){
+        UserComment userComment = new UserComment();
+        userComment.setContent(content);
+        UserPost userPost = userPostService.getUserPost(postId);
         userComment.setNickname(getUserNicknameFromJwtToken(token));
         userPost.addComment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
-        userPostService.updateCommentCount(post_id);
+        userPostService.updateCommentCount(postId);
         commentService.write_comment(userComment);
         return userComments;
     }
