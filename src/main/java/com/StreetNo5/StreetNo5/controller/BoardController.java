@@ -58,9 +58,9 @@ public class BoardController {
 
     @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
     @GetMapping("/popular-post")
-    public List<UserPostsDto> getPopularPost()
+    public List<UserPost> getPopularPost()
     {
-        return ConvertDto(userPostService.getUserPolarPost());
+        return userPostService.getUserPolarPost();
     }
 
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
@@ -74,7 +74,6 @@ public class BoardController {
     @PostMapping("/post")
     @PreAuthorize("hasRole('ROLE_USER')")
     public String writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
-
         String nickname = getUserNicknameFromJwtToken(token);
         String imageUrl = gcsService.updateMemberInfo(imageFile);
         UserPost post = UserPost.builder()
