@@ -1,6 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.domain.dtos.UserPostDto;
 import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
@@ -58,9 +59,10 @@ public class BoardController {
 
     @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
     @GetMapping("/popular-post")
-    public List<UserPost> getPopularPost()
+    public List<UserPostDto> getPopularPost()
     {
-        return userPostService.getUserPolarPost();
+        List<UserPost> userPolarPost = userPostService.getUserPolarPost();
+        return ConvertPopularDto(userPolarPost);
     }
 
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
@@ -100,6 +102,23 @@ public class BoardController {
     }
     private Long convertTags(String tags){
         return Long.parseLong(tags,2);
+    }
+
+    private List<UserPostDto> ConvertPopularDto(List<UserPost> userPosts) {
+        List<UserPostDto> userPostsLists = new ArrayList<>();
+        for (UserPost userPost : userPosts){
+            UserPostDto userPostsDto=new UserPostDto();
+            userPostsDto.setId(userPost.getId());
+            userPostsDto.setNickname(userPost.getNickname());
+            userPostsDto.setViewCount(userPost.getViewCount());
+            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsDto.setContent(userPost.getContent());
+            userPostsDto.setAddress_name(userPost.getAddress_name());
+            userPostsDto.setModifiedDate(userPost.getModifiedDate());
+            userPostsDto.setTags(userPost.getTags());
+            userPostsLists.add(userPostsDto);
+        }
+        return userPostsLists;
     }
 
 
