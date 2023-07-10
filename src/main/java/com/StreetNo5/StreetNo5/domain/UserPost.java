@@ -53,7 +53,6 @@ public class UserPost extends BaseTimeEntity{
     }
 
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
-    @OrderBy("comment_id desc")
     @JsonManagedReference
     private List<UserComment> userComments=new ArrayList<>();
 
