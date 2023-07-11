@@ -124,6 +124,7 @@ public class UserController {
                     .content(userComment.getContent())
                     .post_id(userComment.getUserPost().getId())
                     .image_url(userComment.getUserPost().getImageUrl())
+                    .modifiedDate(userComment.getModifiedDate())
                     .build();
             myCommentsDtos.add(myCommentsDto);
 
