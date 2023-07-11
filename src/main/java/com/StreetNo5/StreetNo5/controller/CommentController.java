@@ -27,7 +27,7 @@ public class CommentController {
     @Operation(summary = "댓글 작성 API")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/comment")
-    public List<UserComment> write_comment(Long postId,String content,@RequestHeader(value = "Authorization") String token){
+    public List<UserComment> write_comment(Long postId, String content, @RequestHeader(value = "Authorization") String token){
         UserComment userComment = new UserComment();
         userComment.setContent(content);
         UserPost userPost = userPostService.getUserPost(postId);

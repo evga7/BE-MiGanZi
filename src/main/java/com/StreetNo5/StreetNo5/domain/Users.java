@@ -27,6 +27,8 @@ public class Users extends BaseTimeEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
+
     @Builder
     public Users(Long id, String nickname,String password, Role role) {
         this.id = id;

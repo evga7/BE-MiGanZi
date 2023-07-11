@@ -6,6 +6,7 @@ import com.StreetNo5.StreetNo5.config.auth.UserDetailsServiceImpl;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.domain.Users;
 import com.StreetNo5.StreetNo5.domain.dtos.SignupForm;
+import com.StreetNo5.StreetNo5.repository.RefreshTokenRedisRepository;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
 
     public String login(String nickname,String password) {
@@ -36,8 +38,14 @@ public class UserService {
         // 검증
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+
         // 검증된 인증 정보로 JWT 토큰 생성
         String token = jwtTokenProvider.generateToken(authentication);
+
+/*        refreshTokenRedisRepository.save(RefreshToken.builder()
+                .id(authentication.getName())
+                .authorities(authentication.getAuthorities())
+                .refreshToken(token.get))*/
 
         return token;
     }

@@ -3,12 +3,16 @@ package com.StreetNo5.StreetNo5.controller;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dtos.UserPostDto;
 import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
+import com.StreetNo5.StreetNo5.service.BoardService;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,36 +30,16 @@ public class BoardController {
 
     private final UserPostService userPostService;
     private final GCSService gcsService;
+    private final BoardService boardService;
 
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
     public Slice<UserPostsDto> getBoardList(@PageableDefault (size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable) {
         List<UserPost> userPosts = userPostService.getUserPosts();
-        return getUserPostsDto(pageable,userPosts);
+        return getUsersPostsDto(pageable,userPosts);
     }
 
-    private Slice<UserPostsDto> getUserPostsDto(Pageable pageable, List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = ConvertDto(userPosts);
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
-        boolean hasNext = false;
-        if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
-            hasNext = true;
-        }
-        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
-        return slice;
-    }
 
-    private List<UserPostsDto> ConvertDto(List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = new ArrayList<>();
-        for (UserPost userPost : userPosts){
-            UserPostsDto userPostsDto=new UserPostsDto();
-            userPostsDto.setId(userPost.getId());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
-            userPostsLists.add(userPostsDto);
-        }
-        return userPostsLists;
-    }
 
     @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
     @GetMapping("/popular-post")
@@ -90,7 +74,31 @@ public class BoardController {
                 .build();
         userPostService.writePost(post);
         return "OK";
+    }
 
+
+
+    private Slice<UserPostsDto> getUsersPostsDto(Pageable pageable, List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = ConvertDto(userPosts);
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
+        boolean hasNext = false;
+        if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
+            hasNext = true;
+        }
+        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
+        return slice;
+    }
+
+    private List<UserPostsDto> ConvertDto(List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = new ArrayList<>();
+        for (UserPost userPost : userPosts){
+            UserPostsDto userPostsDto=new UserPostsDto();
+            userPostsDto.setId(userPost.getId());
+            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsLists.add(userPostsDto);
+        }
+        return userPostsLists;
     }
 
     private String getUserNicknameFromJwtToken(String token) {

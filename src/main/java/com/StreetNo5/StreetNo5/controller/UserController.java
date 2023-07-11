@@ -1,21 +1,38 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
+import com.StreetNo5.StreetNo5.domain.UserComment;
+import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.domain.dtos.MyCommentsDto;
 import com.StreetNo5.StreetNo5.domain.dtos.SignupForm;
+import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
+import com.StreetNo5.StreetNo5.service.BoardService;
+import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
     private final UserService userService;
+    private final CommentService commentService;
+    private final BoardService boardService;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
@@ -51,6 +68,94 @@ public class UserController {
         else
             return "OK";
     }
+
+
+    @GetMapping("/my-page/posts")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public Slice<UserPostsDto> getUserPosts(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
+                                            @RequestHeader(value = "Authorization") String token){
+        String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
+        // todo jwt 검증후 return
+        List<UserPost> userPosts = boardService.getUserPosts(userNicknameFromJwtToken);
+        return getUsersPostsDto(pageable,userPosts);
+    }
+
+
+    //내용 그림 시간
+    @GetMapping("/my-page/comments")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public Slice<MyCommentsDto> getUserComments(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
+                                                @RequestHeader(value = "Authorization") String token){
+        String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
+        // todo jwt 검증후 return
+        List<UserComment> userCommentsInfo = commentService.getUserCommentsInfo(userNicknameFromJwtToken);
+        Slice<MyCommentsDto> userCommentsDto = getUserCommentsDto(pageable, userCommentsInfo);
+        return userCommentsDto;
+    }
+
+
+    private String getUserNicknameFromJwtToken(String token) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        final String[] splitJwt = token.split("\\.");
+        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
+        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+        return nickname;
+    }
+
+
+
+    // 댓글 변환
+    private Slice<MyCommentsDto> getUserCommentsDto(Pageable pageable, List<UserComment> userComments) {
+        List<MyCommentsDto> myCommentsDtos = ConvertCommentsDto(userComments);
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), myCommentsDtos.size());
+        boolean hasNext = false;
+        if (myCommentsDtos.size()- pageable.getPageSize() > pageable.getOffset()) {
+            hasNext = true;
+        }
+        Slice<MyCommentsDto> slice = new SliceImpl<>(myCommentsDtos.subList(start, end), pageable, hasNext);
+        return slice;
+    }
+
+    private List<MyCommentsDto> ConvertCommentsDto(List<UserComment> userComments) {
+        List<MyCommentsDto> myCommentsDtos = new ArrayList<>();
+        for (UserComment userComment : userComments){
+            MyCommentsDto myCommentsDto = MyCommentsDto.builder()
+                    .content(userComment.getContent())
+                    .post_id(userComment.getUserPost().getId())
+                    .image_url(userComment.getUserPost().getImageUrl())
+                    .build();
+            myCommentsDtos.add(myCommentsDto);
+
+        }
+        return myCommentsDtos;
+    }
+    //댓글  끝
+
+    //게시글 변환
+    private Slice<UserPostsDto> getUsersPostsDto(Pageable pageable, List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = ConvertDto(userPosts);
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
+        boolean hasNext = false;
+        if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
+            hasNext = true;
+        }
+        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
+        return slice;
+    }
+
+    private List<UserPostsDto> ConvertDto(List<UserPost> userPosts) {
+        List<UserPostsDto> userPostsLists = new ArrayList<>();
+        for (UserPost userPost : userPosts){
+            UserPostsDto userPostsDto=new UserPostsDto();
+            userPostsDto.setId(userPost.getId());
+            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsLists.add(userPostsDto);
+        }
+        return userPostsLists;
+    }
+    //게시글 끝
 
 
 
