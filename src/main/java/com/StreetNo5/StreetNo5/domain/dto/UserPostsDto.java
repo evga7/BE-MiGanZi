@@ -1,4 +1,4 @@
-package com.StreetNo5.StreetNo5.domain.dtos;
+package com.StreetNo5.StreetNo5.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;

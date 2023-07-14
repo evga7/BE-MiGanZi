@@ -1,8 +1,8 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dtos.UserPostDto;
-import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.UserPostDto;
+import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.BoardService;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;

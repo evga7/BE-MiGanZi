@@ -3,14 +3,15 @@ package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dtos.MyCommentsDto;
-import com.StreetNo5.StreetNo5.domain.dtos.SignupForm;
-import com.StreetNo5.StreetNo5.domain.dtos.UserPostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.MyCommentsDto;
+import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
+import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
 import com.StreetNo5.StreetNo5.service.BoardService;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,9 +37,8 @@ public class UserController {
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
-    public ResponseEntity<String> loginSuccess(String nickname,String password) {
-        String token = userService.login(nickname,password);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> loginSuccess(HttpServletRequest request,String nickname, String password) {
+        return userService.login(request,nickname,password);
     }
 
     @Operation(summary = "회원가입 API")
@@ -93,6 +93,10 @@ public class UserController {
         return userCommentsDto;
     }
 
+    @PostMapping(value = "/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest httpServletRequest) {
+        return userService.reissue(httpServletRequest);
+    }
 
     private String getUserNicknameFromJwtToken(String token) {
         Base64.Decoder decoder = Base64.getDecoder();

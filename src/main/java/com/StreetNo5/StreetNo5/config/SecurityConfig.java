@@ -1,6 +1,7 @@
 package com.StreetNo5.StreetNo5.config;
 
 
+import com.StreetNo5.StreetNo5.config.auth.UserDetailsServiceImpl;
 import com.StreetNo5.StreetNo5.config.jwt.JwtAuthenticationFilter;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
 
     @Bean
@@ -42,6 +44,7 @@ public class SecurityConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.userDetailsService(userDetailsService);
         return http.build();
     }
     @Bean

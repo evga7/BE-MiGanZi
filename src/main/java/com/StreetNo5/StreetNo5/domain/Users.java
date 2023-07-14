@@ -21,6 +21,7 @@ public class Users extends BaseTimeEntity{
 
     @Unique
     @NotNull
+    @Column(unique = true)
     private String nickname;
     @NotNull
     private String password;
