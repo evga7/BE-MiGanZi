@@ -33,7 +33,7 @@ public class UserFindPostController {
         List<UserPost> userPostList = new ArrayList<>();
         Long tags_num=convertTags(tags);
         for (int i=0;i<userPostData.size();i++){
-            if (getDistance(lat,lng,userPostData.get(i).getLat(),userPostData.get(i).getLng())<=2
+            if (getDistance(lat,lng,userPostData.get(i).getLat(),userPostData.get(i).getLng())<=5
                     && ((tags_num&userPostData.get(i).getTagsNum()))==tags_num){
                 userPostList.add(userPostData.get(i));
             }

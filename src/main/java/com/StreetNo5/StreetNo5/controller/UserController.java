@@ -47,6 +47,28 @@ public class UserController {
         return userService.signup(signupForm);
     }
 
+    @Operation(summary = "닉네임 변경 API")
+    @PostMapping("/update-nickname")
+    public ResponseEntity<?> changeUserNickName(@RequestHeader(value = "Authorization") String token,String newNickname)
+    {
+        return userService.changeNickName(token.substring(7),getUserNicknameFromJwtToken(token),newNickname);
+    }
+
+    @Operation(summary = "로그아웃 API")
+    @PostMapping("/logout")
+    public ResponseEntity<?> userLogout(@RequestHeader(value = "Authorization") String token)
+    {
+        return userService.logout(token.substring(7));
+    }
+
+    @Operation(summary = "회원탈퇴 API")
+    @PostMapping("/withdrawal")
+    public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token)
+    {
+        return userService.logout(token.substring(7));
+    }
+
+
     @Operation(summary = "닉네임 조건 확인 API",description = "반환값 String, 닉네임 존재시 extis," +
             "빈값 empty," +
             "8글자 이상 length," +

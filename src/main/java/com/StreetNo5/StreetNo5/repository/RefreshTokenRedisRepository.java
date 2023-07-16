@@ -5,7 +5,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.repository.CrudRepository;
 
 @EnableRedisRepositories
-public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken, Long> {
+public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken, String> {
 
     RefreshToken findByRefreshToken(String refreshToken);
 }

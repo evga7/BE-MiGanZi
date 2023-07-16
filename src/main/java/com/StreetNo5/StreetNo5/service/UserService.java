@@ -3,7 +3,7 @@ package com.StreetNo5.StreetNo5.service;
 
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
-import com.StreetNo5.StreetNo5.domain.Users;
+import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
 import com.StreetNo5.StreetNo5.domain.dto.UserResponseDto;
@@ -12,6 +12,7 @@ import com.StreetNo5.StreetNo5.repository.RefreshTokenRedisRepository;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,19 +23,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
 
     private final BCryptPasswordEncoder encoder;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final ApiResponse response;
+    private final RedisService redisService;
+    private final RedisTemplate redisTemplate;
 
 
+    public Optional<User> findUser(String Nickname){
+        return userRepository.findByNickname(Nickname);
+    }
     public ResponseEntity<?> login(HttpServletRequest request,String nickname, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(nickname , password);
 
@@ -56,6 +65,30 @@ public class UserService {
         return response.success(tokenInfo);
     }
 
+    public ResponseEntity<?> logout(String token) {
+        // 1. Access Token 검증
+        if (!jwtTokenProvider.validateToken(token)) {
+            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 2. Access Token 에서 User email 을 가져옵니다.
+        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+
+        // 3. Redis 에서 해당 User name 로 저장된 Refresh Token 이 있는지 여부를 확인 후 있을 경우 삭제합니다.
+        Optional<RefreshToken> byId = refreshTokenRedisRepository.findById(authentication.getName());
+        if (byId.get() != null) {
+            // Refresh Token 삭제
+            redisService.removeRefreshToken(byId.get());
+        }
+
+        // 4. 해당 Access Token 유효시간 가지고 와서 BlackList 로 저장하기
+        Long expiration = jwtTokenProvider.getExpiration(token);
+        redisTemplate.opsForValue()
+                .set(token, "logout", expiration, TimeUnit.MILLISECONDS);
+
+        return response.success("로그아웃 되었습니다.");
+    }
+
     public Long signup(SignupForm signupForm) {
         boolean check = checkNickNameExists(signupForm.getNickname());
 
@@ -65,7 +98,7 @@ public class UserService {
 
         String encPwd = encoder.encode(signupForm.getPassword());
 
-        Users user = repository.save(signupForm.toEntity(encPwd));
+        User user = userRepository.save(signupForm.toEntity(encPwd));
 
         if(user!=null) {
             return user.getId();
@@ -91,15 +124,15 @@ public class UserService {
                     String currentIpAddress = Helper.getClientIp(request);
                     if (refreshToken.getIp().equals(currentIpAddress)) {
                         // 5. Redis 에 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
-                        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(refreshToken.getId(), refreshToken.getAuthorities());
+                        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateAccessToken(refreshToken.getId(), refreshToken.getAuthorities());
 
-                        // 4. Redis RefreshToken update
+/*                        // 4. Redis RefreshToken update
                         refreshTokenRedisRepository.save(RefreshToken.builder()
                                 .id(refreshToken.getId())
                                 .ip(currentIpAddress)
                                 .authorities(refreshToken.getAuthorities())
                                 .refreshToken(tokenInfo.getRefreshToken())
-                                .build());
+                                .build());*/
 
                         return response.success(tokenInfo);
                     }
@@ -110,8 +143,17 @@ public class UserService {
         return response.fail("토큰 갱신에 실패했습니다.");
     }
 
+    public ResponseEntity<?> changeNickName(String token,String userNickname,String newNickname)
+    {
+        Optional<User> user = userRepository.findByNickname(userNickname);
+        user.get().update(newNickname);
+        userRepository.save(user.get());
+        logout(token);
+        return response.success();
+    }
+
     public boolean checkNickNameExists(String nickname) {
-       return repository.existsUsersByNickname(nickname);
+       return userRepository.existsUsersByNickname(nickname);
     }
 
 }

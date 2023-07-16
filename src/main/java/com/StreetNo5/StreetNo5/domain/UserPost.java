@@ -1,5 +1,6 @@
 package com.StreetNo5.StreetNo5.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -55,6 +56,11 @@ public class UserPost extends BaseTimeEntity{
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<UserComment> userComments=new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
 
 

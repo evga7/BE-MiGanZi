@@ -3,10 +3,12 @@ package com.StreetNo5.StreetNo5.config;
 
 import com.StreetNo5.StreetNo5.config.auth.UserDetailsServiceImpl;
 import com.StreetNo5.StreetNo5.config.jwt.JwtAuthenticationFilter;
+import com.StreetNo5.StreetNo5.config.jwt.JwtExceptionFilter;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +26,8 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtExceptionFilter jwtExceptionFilter;
+    private final RedisTemplate redisTemplate;
 
 
     @Bean
@@ -39,11 +43,13 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests()
-                .anyRequest().permitAll()
+                .requestMatchers("/user/login","/user/signup","/user/reissue").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider,redisTemplate), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
         http.userDetailsService(userDetailsService);
         return http.build();
     }

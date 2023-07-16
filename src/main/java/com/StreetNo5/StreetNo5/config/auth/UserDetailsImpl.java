@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.config.auth;
 
-import com.StreetNo5.StreetNo5.domain.Users;
+import com.StreetNo5.StreetNo5.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,9 +10,9 @@ import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final Users user;
+    private final User user;
 
-    public UserDetailsImpl(Users user) {
+    public UserDetailsImpl(User user) {
         this.user = user;
     }
 

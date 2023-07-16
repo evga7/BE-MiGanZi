@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.config.auth;
 
-import com.StreetNo5.StreetNo5.domain.Users;
+import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -17,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
-        Users findUser = userRepository.findByNickname(nickname)
+        User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new UsernameNotFoundException("Can't find user with this nickname. -> " + nickname));
 
 

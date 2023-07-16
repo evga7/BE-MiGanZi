@@ -1,10 +1,12 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
+import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
+import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RequestMapping("/user/board")
@@ -23,6 +26,7 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
     private final UserPostService userPostService;
+    private final UserService userService;
 
     @Operation(summary = "댓글 작성 API")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -31,11 +35,17 @@ public class CommentController {
         UserComment userComment = new UserComment();
         userComment.setContent(content);
         UserPost userPost = userPostService.getUserPost(postId);
-        userComment.setNickname(getUserNicknameFromJwtToken(token));
+        String nickname = getUserNicknameFromJwtToken(token);
+        userComment.setNickname(nickname);
         userPost.addComment(userComment);
-        List<UserComment> userComments = userPost.getUserComments();
+
+        Optional<User> user = userService.findUser(nickname);
+        User user1 = user.get();
+        user1.addComment(userComment);
+        userComment.setUser(user1);
         userPostService.updateCommentCount(postId);
         commentService.write_comment(userComment);
+        List<UserComment> userComments = userPost.getUserComments();
         return userComments;
     }
     private String getUserNicknameFromJwtToken(String token) {

@@ -6,8 +6,11 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -16,7 +19,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
+    @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate redisTemplate;
+
 
 
     @Override
@@ -27,8 +33,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         //2. validateToken 메서드로 토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {
             if (!((HttpServletRequest) request).getRequestURI().equals("/user/reissue")) {
-                Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String isLogout = (String)redisTemplate.opsForValue().get(token);
+                if (ObjectUtils.isEmpty(isLogout)) {
+                    Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
         chain.doFilter(request, response);
