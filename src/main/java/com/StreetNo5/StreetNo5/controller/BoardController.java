@@ -4,7 +4,6 @@ import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.UserPostDto;
 import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
-import com.StreetNo5.StreetNo5.service.BoardService;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
@@ -33,7 +32,6 @@ public class BoardController {
 
     private final UserPostService userPostService;
     private final GCSService gcsService;
-    private final BoardService boardService;
     private final UserService userService;
 
 

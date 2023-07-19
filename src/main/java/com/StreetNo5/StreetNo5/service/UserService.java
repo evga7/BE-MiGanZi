@@ -8,8 +8,8 @@ import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
 import com.StreetNo5.StreetNo5.domain.dto.UserResponseDto;
 import com.StreetNo5.StreetNo5.lib.Helper;
-import com.StreetNo5.StreetNo5.repository.RefreshTokenRedisRepository;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
+import com.StreetNo5.StreetNo5.service.redis.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -35,12 +36,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final ApiResponse response;
     private final RedisService redisService;
     private final RedisTemplate redisTemplate;
 
 
+    public List<User> findAlluser(){return userRepository.findAll();}
     public Optional<User> findUser(String Nickname){
         return userRepository.findByNickname(Nickname);
     }
@@ -54,14 +55,12 @@ public class UserService {
         // 검증된 인증 정보로 JWT 토큰 생성
         UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
-        RefreshToken build = RefreshToken.builder()
+        redisService.saveRefreshToken(RefreshToken.builder()
                 .id(authentication.getName())
                 .ip(Helper.getClientIp(request))
                 .authorities(authentication.getAuthorities())
                 .refreshToken(tokenInfo.getRefreshToken())
-                .build();
-        refreshTokenRedisRepository.save(build);
-
+                .build());
         return response.success(tokenInfo);
     }
 
@@ -75,7 +74,7 @@ public class UserService {
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
         // 3. Redis 에서 해당 User name 로 저장된 Refresh Token 이 있는지 여부를 확인 후 있을 경우 삭제합니다.
-        Optional<RefreshToken> byId = refreshTokenRedisRepository.findById(authentication.getName());
+        Optional<RefreshToken> byId = redisService.findRefreshTokenById((authentication.getName()));
         if (byId.get() != null) {
             // Refresh Token 삭제
             redisService.removeRefreshToken(byId.get());
@@ -118,7 +117,7 @@ public class UserService {
             //3. refresh token 인지 확인
             if (jwtTokenProvider.isRefreshToken(token)) {
                 //refresh token
-                RefreshToken refreshToken = refreshTokenRedisRepository.findByRefreshToken(token);
+                RefreshToken refreshToken = redisService.findByRefresh(token);
                 if (refreshToken != null) {
                     //4. 최초 로그인한 ip 와 같은지 확인 (처리 방식에 따라 재발급을 하지 않거나 메일 등의 알림을 주는 방법이 있음)
                     String currentIpAddress = Helper.getClientIp(request);

@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String REFRESH_TOKEN_HEADER = "refreshToken";
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
     private static final String TYPE_ACCESS = "access";
