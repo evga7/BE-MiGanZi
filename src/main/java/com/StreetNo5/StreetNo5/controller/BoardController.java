@@ -64,7 +64,7 @@ public class BoardController {
     }
 
     @Operation(summary = "게시글 작성 API")
-    @PostMapping("/post")
+    @PostMapping("/post/write")
     @PreAuthorize("hasRole('ROLE_USER')")
     public String writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
         String nickname = getUserNicknameFromJwtToken(token);
