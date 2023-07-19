@@ -14,6 +14,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     public List<UserPost> getUserPosts(String nickname){
-        return boardRepository.findByNickname(nickname);
+        return boardRepository.findByUser_Nickname(nickname);
     }
 }

@@ -1,23 +1,20 @@
 package com.StreetNo5.StreetNo5.controller;
 
+import com.StreetNo5.StreetNo5.config.redis.UserAlert;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.dto.RoomMessage;
+import com.StreetNo5.StreetNo5.repository.UserAlertRedisRepository;
 import com.StreetNo5.StreetNo5.service.UserService;
 import com.StreetNo5.StreetNo5.service.redis.RedisPublisher;
 import com.StreetNo5.StreetNo5.service.redis.RedisSubscriber;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @RequestMapping("/pubsub")
@@ -35,6 +32,7 @@ public class PubSubController {
     private final RedisSubscriber redisSubscriber;
     // topic 이름으로 topic정보를 가져와 메시지를 발송할 수 있도록 Map에 저장
     private Map<String, ChannelTopic> channels;
+    private final UserAlertRedisRepository userAlertRedisRepository;
 
     @PostConstruct
     public void init() {
@@ -47,9 +45,15 @@ public class PubSubController {
 
     // 유효한 Topic 리스트 반환
 
-    @GetMapping("/room")
     public Set<String> findAllRoom() {
         return channels.keySet();
+    }
+
+    @Operation(summary = "유저 알림 정보 확인 API")
+    @GetMapping("/user-alert")
+    public List<UserAlert> getUserAlert(@RequestHeader(value = "Authorization") String token){
+        List<UserAlert> byNickname = userAlertRedisRepository.findByNickname(getUserNicknameFromJwtToken(token));
+        return byNickname;
     }
 
     // 신규 Topic을 생성하고 Listener등록 및 Topic Map에 저장
@@ -76,5 +80,13 @@ public class PubSubController {
         ChannelTopic channel = channels.get(roomId);
         redisMessageListener.removeMessageListener(redisSubscriber, channel);
         channels.remove(roomId);
+    }
+
+    private String getUserNicknameFromJwtToken(String token) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        final String[] splitJwt = token.split("\\.");
+        final String payloadStr = new String(decoder.decode(splitJwt[1].getBytes()));
+        String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
+        return nickname;
     }
 }

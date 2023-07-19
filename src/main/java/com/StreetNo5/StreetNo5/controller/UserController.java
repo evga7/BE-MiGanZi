@@ -4,7 +4,6 @@ package com.StreetNo5.StreetNo5.controller;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.MyCommentsDto;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
 import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
@@ -37,7 +36,6 @@ public class UserController {
     private final CommentService commentService;
     private final BoardService boardService;
     private final PubSubController pubSubController;
-    private final ApiResponse apiResponse;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
@@ -111,7 +109,7 @@ public class UserController {
                                             @RequestHeader(value = "Authorization") String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // todo jwt 검증후 return
-        List<UserPost> userPosts = boardService.getUserPosts(userNicknameFromJwtToken);
+        List<UserPost> userPosts = userService.getUserPosts(userNicknameFromJwtToken);
         return getUsersPostsDto(pageable,userPosts);
     }
 
@@ -123,7 +121,7 @@ public class UserController {
                                                 @RequestHeader(value = "Authorization") String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // todo jwt 검증후 return
-        List<UserComment> userCommentsInfo = commentService.getUserCommentsInfo(userNicknameFromJwtToken);
+        List<UserComment> userCommentsInfo = userService.getUserComments(userNicknameFromJwtToken);
         Slice<MyCommentsDto> userCommentsDto = getUserCommentsDto(pageable, userCommentsInfo);
         return userCommentsDto;
     }

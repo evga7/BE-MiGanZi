@@ -50,15 +50,16 @@ public class CommentController {
         userPostService.updateCommentCount(postId);
         commentService.write_comment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
-        pubSubController.pushMessage(userPost.getUser().getNickname(),"댓글이 등록되었습니다.",userComment.getCreatedDate(),userComment.getContent());
-
-
-        redisService.saveUserAlert(UserAlert.builder()
-                        .id(userPost.getUser().getNickname())
-                        .createdDate(userComment.getCreatedDate())
-                        .title("댓글이 등록되었습니다.")
-                        .message(userComment.getContent())
-                        .build());
+        // 다른사람의 댓글만 알림
+        if (!userPost.getUser().getNickname().equals(userComment.getNickname())) {
+            pubSubController.pushMessage(userPost.getUser().getNickname(), "댓글이 등록되었습니다.", userComment.getCreatedDate(), userComment.getContent());
+            redisService.saveUserAlert(UserAlert.builder()
+                    .createdDate(userComment.getCreatedDate())
+                    .title("댓글이 등록되었습니다.")
+                    .nickname(userPost.getUser().getNickname())
+                    .message(userComment.getContent())
+                    .build());
+        }
         return userComments;
     }
     private String getUserNicknameFromJwtToken(String token) {

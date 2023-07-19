@@ -4,6 +4,8 @@ package com.StreetNo5.StreetNo5.service;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
 import com.StreetNo5.StreetNo5.domain.User;
+import com.StreetNo5.StreetNo5.domain.UserComment;
+import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
 import com.StreetNo5.StreetNo5.domain.dto.UserResponseDto;
@@ -176,6 +178,15 @@ public class UserService {
         return response.fail("토큰 갱신에 실패했습니다.");
     }
 
+
+    public List<UserPost> getUserPosts(String nickname){
+        Optional<User> byNickname = userRepository.findByNickname(nickname);
+        return byNickname.get().getUserPosts();
+    }
+    public List<UserComment> getUserComments(String nickname){
+        Optional<User> byNickname = userRepository.findByNickname(nickname);
+        return byNickname.get().getUserComments();
+    }
     public ResponseEntity<?> changeNickName(String token,String userNickname,String newNickname)
     {
         Optional<User> user = userRepository.findByNickname(userNickname);
