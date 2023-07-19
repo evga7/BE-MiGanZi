@@ -23,7 +23,7 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
     @Query(value = "select * from user_post order by view_count desc limit 5",nativeQuery = true)
     List<UserPost> findPolarPost();
 
-    List<UserPost> findByNickname(String nickname);
+    List<UserPost> findByUser_Nickname(String nickname);
 
 
 

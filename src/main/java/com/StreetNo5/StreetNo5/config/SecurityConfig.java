@@ -1,7 +1,9 @@
 package com.StreetNo5.StreetNo5.config;
 
 
+import com.StreetNo5.StreetNo5.config.auth.UserDetailsServiceImpl;
 import com.StreetNo5.StreetNo5.config.jwt.JwtAuthenticationFilter;
+import com.StreetNo5.StreetNo5.config.jwt.JwtExceptionFilter;
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtExceptionFilter jwtExceptionFilter;
+    private final SecurityConfigProperties securityConfigProperties;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
     @Bean
@@ -37,19 +43,24 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests()
-                .anyRequest().permitAll()
+                .requestMatchers(securityConfigProperties.PERMIT_ALL_REQUEST_MATCHERS).permitAll()
+                //.requestMatchers(securityConfigProperties.ADMIN_REQUEST_MATCHERS).hasRole("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+        http.userDetailsService(userDetailsService);
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("https://miganzi.vercel.app");
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(securityConfigProperties.ORIGIN);
+        configuration.addAllowedOrigin(securityConfigProperties.ORIGIN2);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

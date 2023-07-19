@@ -8,24 +8,20 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value = "refresh", timeToLive = ExpireTime.REFRESH_TOKEN_EXPIRE_TIME_FOR_REDIS)
-public class RefreshToken {
-
+@RedisHash(value = "userAlert", timeToLive = ExpireTime.REFRESH_TOKEN_EXPIRE_TIME_FOR_REDIS)
+public class UserAlert {
     @Id
     private String id;
-
-    private String ip;
-
-    private Collection<? extends GrantedAuthority> authorities;
+    private String title;
+    private String message;
+    private String createdDate;
 
     @Indexed
-    private String refreshToken;
+    private String nickname;
+
 }
