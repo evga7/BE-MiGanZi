@@ -8,8 +8,11 @@ import org.springframework.stereotype.Component;
 @Getter
 public class SecurityConfigProperties {
 
-    @Value("${spring.security.matchers}")
-    public String[] REQUEST_MATCHERS;
+    @Value("${spring.security.matchers.permit.all}")
+    public String[] PERMIT_ALL_REQUEST_MATCHERS;
+
+/*    @Value("${spring.security.matchers.admin}")
+    public String[] ADMIN_REQUEST_MATCHERS;*/
 
     @Value("${spring.security.origin}")
     public String ORIGIN;
