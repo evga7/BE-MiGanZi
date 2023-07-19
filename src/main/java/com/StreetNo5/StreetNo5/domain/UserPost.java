@@ -18,7 +18,6 @@ public class UserPost extends BaseTimeEntity{
     @Column(name="post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nickname;
     private Long viewCount=0L;
     private Long commentCount=0L;
     @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
@@ -34,9 +33,8 @@ public class UserPost extends BaseTimeEntity{
 
 
     @Builder
-    public UserPost(String nickname, String content,String imageUrl,Double lat,Double lng,String address_name
+    public UserPost(String content,String imageUrl,Double lat,Double lng,String address_name
             ,String tags,String music_id,Long tags_num) {
-        this.nickname=nickname;
         this.content=content;
         this.imageUrl=imageUrl;
         this.lat=lat;
@@ -53,7 +51,7 @@ public class UserPost extends BaseTimeEntity{
         userComment.setUserPost(this);
     }
 
-    @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<UserComment> userComments=new ArrayList<>();
 

@@ -50,7 +50,7 @@ public class CommentController {
         userPostService.updateCommentCount(postId);
         commentService.write_comment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
-        pubSubController.pushMessage(userPost.getNickname(),"댓글이 등록되었습니다.",userComment.getCreatedDate(),userComment.getContent());
+        pubSubController.pushMessage(userPost.getUser().getNickname(),"댓글이 등록되었습니다.",userComment.getCreatedDate(),userComment.getContent());
 
 
         redisService.saveUserAlert(UserAlert.builder()

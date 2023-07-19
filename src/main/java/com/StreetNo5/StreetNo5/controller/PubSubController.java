@@ -9,7 +9,10 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +54,7 @@ public class PubSubController {
 
     // 신규 Topic을 생성하고 Listener등록 및 Topic Map에 저장
 
-    @PutMapping("/room/{roomId}")
+    //@PutMapping("/room/{roomId}")
     public void createRoom(@PathVariable String roomId) {
         ChannelTopic channel = new ChannelTopic(roomId);
         redisMessageListener.addMessageListener(redisSubscriber, channel);
@@ -61,14 +64,14 @@ public class PubSubController {
 
     // 특정 Topic에 메시지 발행
 
-    @PostMapping("/room/{roomId}")
+    //@PostMapping("/room/{roomId}")
     public void pushMessage(@PathVariable String roomId, String title,String createdDate, String message) {
         ChannelTopic channel = channels.get(roomId);
         redisPublisher.publish(channel, RoomMessage.builder().title(title).createdDate(createdDate).roomId(roomId).message(message).build());
     }
 
     // Topic 삭제 후 Listener 해제, Topic Map에서 삭제
-    @DeleteMapping("/room/{roomId}")
+    //@DeleteMapping("/room/{roomId}")
     public void deleteRoom(@PathVariable String roomId) {
         ChannelTopic channel = channels.get(roomId);
         redisMessageListener.removeMessageListener(redisSubscriber, channel);

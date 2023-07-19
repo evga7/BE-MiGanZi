@@ -1,8 +1,10 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
+import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.MyCommentsDto;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
 import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
@@ -35,17 +37,23 @@ public class UserController {
     private final CommentService commentService;
     private final BoardService boardService;
     private final PubSubController pubSubController;
+    private final ApiResponse apiResponse;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
-    public ResponseEntity<?> loginSuccess(HttpServletRequest request,String nickname, String password) {
-        return userService.login(request,nickname,password);
+    public ResponseEntity<?> login(HttpServletRequest request, String nickname, String password) {
+
+        return userService.login(request, nickname, password);
     }
 
     @Operation(summary = "회원가입 API")
     @PostMapping("/signup")
     public Long signup(SignupForm signupForm) {
-        return userService.signup(signupForm);
+        Long signup = userService.signup(signupForm);
+        if (signupForm.getNickname().equals(signupForm.getNickname())){
+            pubSubController.createRoom(signupForm.getNickname());
+        }
+        return signup;
     }
 
     @Operation(summary = "닉네임 변경 API")
@@ -67,8 +75,10 @@ public class UserController {
     public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token)
     {
         String nickname = getUserNicknameFromJwtToken(token);
+        ResponseEntity<?> withdrawal = userService.withdrawal(token.substring(7), nickname);
+        //TODO deleteRomm 검증후 delete
         pubSubController.deleteRoom(nickname);
-        return userService.logout(token.substring(7));
+        return withdrawal;
     }
 
 
@@ -133,6 +143,9 @@ public class UserController {
 
 
 
+    public List<User> getAllUser(){
+        return userService.findAlluser();
+    }
     // 댓글 변환
     private Slice<MyCommentsDto> getUserCommentsDto(Pageable pageable, List<UserComment> userComments) {
         List<MyCommentsDto> myCommentsDtos = ConvertCommentsDto(userComments);

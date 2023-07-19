@@ -72,7 +72,6 @@ public class BoardController {
         }
         String imageUrl = gcsService.updateMemberInfo(imageFile);
         UserPost post = UserPost.builder()
-                .nickname(nickname)
                 .content(userPost.getContent())
                 .imageUrl(imageUrl)
                 .lat(userPost.getLat())
@@ -130,7 +129,7 @@ public class BoardController {
         for (UserPost userPost : userPosts){
             UserPostDto userPostsDto=new UserPostDto();
             userPostsDto.setId(userPost.getId());
-            userPostsDto.setNickname(userPost.getNickname());
+            userPostsDto.setNickname(userPost.getUser().getNickname());
             userPostsDto.setViewCount(userPost.getViewCount());
             userPostsDto.setImageUrl(userPost.getImageUrl());
             userPostsDto.setContent(userPost.getContent());

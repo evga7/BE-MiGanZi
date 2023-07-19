@@ -3,7 +3,6 @@ package com.StreetNo5.StreetNo5.service;
 
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
-import com.StreetNo5.StreetNo5.controller.PubSubController;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
@@ -40,7 +39,7 @@ public class UserService {
     private final ApiResponse response;
     private final RedisService redisService;
     private final RedisTemplate redisTemplate;
-    private final PubSubController pubSubController;
+
 
 
     public List<User> findAlluser(){return userRepository.findAll();}
@@ -90,6 +89,37 @@ public class UserService {
         return response.success("로그아웃 되었습니다.");
     }
 
+    public ResponseEntity<?> withdrawal(String token,String nickname) {
+        // 1. Access Token 검증
+        if (!jwtTokenProvider.validateToken(token)) {
+            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 2. Access Token 에서 User email 을 가져옵니다.
+        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+
+        // 3. Redis 에서 해당 User name 로 저장된 Refresh Token 이 있는지 여부를 확인 후 있을 경우 삭제합니다.
+        Optional<RefreshToken> byId = redisService.findRefreshTokenById((authentication.getName()));
+        if (byId.get() != null) {
+            // Refresh Token 삭제
+            redisService.removeRefreshToken(byId.get());
+        }
+
+        // 4. 해당 Access Token 유효시간 가지고 와서 BlackList 로 저장하기
+        Long expiration = jwtTokenProvider.getExpiration(token);
+        redisTemplate.opsForValue()
+                .set(token, "logout", expiration, TimeUnit.MILLISECONDS);
+
+        Optional<User> byNickname = userRepository.findByNickname(nickname);
+        if (!byNickname.isEmpty()){
+            userRepository.delete(byNickname.get());
+        }
+        else{
+            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        }
+        return response.success("회원탈퇴 되었습니다.");
+    }
+
     public Long signup(SignupForm signupForm) {
         boolean check = checkNickNameExists(signupForm.getNickname());
 
@@ -102,7 +132,7 @@ public class UserService {
         User user = userRepository.save(signupForm.toEntity(encPwd));
 
         if(user!=null) {
-            pubSubController.createRoom(user.getNickname());
+
             return user.getId();
 
         }
