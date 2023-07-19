@@ -34,6 +34,7 @@ public class UserController {
     private final UserService userService;
     private final CommentService commentService;
     private final BoardService boardService;
+    private final PubSubController pubSubController;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
@@ -65,6 +66,8 @@ public class UserController {
     @PostMapping("/withdrawal")
     public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token)
     {
+        String nickname = getUserNicknameFromJwtToken(token);
+        pubSubController.deleteRoom(nickname);
         return userService.logout(token.substring(7));
     }
 

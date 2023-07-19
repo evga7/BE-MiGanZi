@@ -3,6 +3,7 @@ package com.StreetNo5.StreetNo5.service;
 
 import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
+import com.StreetNo5.StreetNo5.controller.PubSubController;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
@@ -39,6 +40,7 @@ public class UserService {
     private final ApiResponse response;
     private final RedisService redisService;
     private final RedisTemplate redisTemplate;
+    private final PubSubController pubSubController;
 
 
     public List<User> findAlluser(){return userRepository.findAll();}
@@ -100,7 +102,9 @@ public class UserService {
         User user = userRepository.save(signupForm.toEntity(encPwd));
 
         if(user!=null) {
+            pubSubController.createRoom(user.getNickname());
             return user.getId();
+
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
