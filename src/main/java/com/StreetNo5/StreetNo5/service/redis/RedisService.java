@@ -23,7 +23,7 @@ public class RedisService {
         return refreshTokenRedisRepository.findById(id);
 
     }
-    public RefreshToken findByRefresh(String refreshToken){
+    public RefreshToken findByRefreshString(String refreshToken){
         return refreshTokenRedisRepository.findByRefreshToken(refreshToken);
     }
     public void saveRefreshToken(RefreshToken refreshToken){

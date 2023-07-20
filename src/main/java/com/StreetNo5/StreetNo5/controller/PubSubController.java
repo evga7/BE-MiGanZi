@@ -44,7 +44,6 @@ public class PubSubController {
     }
 
     // 유효한 Topic 리스트 반환
-
     public Set<String> findAllRoom() {
         return channels.keySet();
     }
