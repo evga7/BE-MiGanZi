@@ -79,6 +79,13 @@ public class UserController {
         return withdrawal;
     }
 
+    @Operation(summary = "비밀번호 변경 API")
+    @PostMapping("/update-password")
+    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") String token,String newPassword)
+    {
+        return userService.changePassword(token.substring(7),newPassword);
+    }
+
 
     @Operation(summary = "닉네임 조건 확인 API",description = "반환값 String, 닉네임 존재시 extis," +
             "빈값 empty," +
@@ -103,6 +110,7 @@ public class UserController {
     }
 
 
+    @Operation(summary = "유저 게시글 받아오는 API")
     @GetMapping("/my-page/posts")
     @PreAuthorize("hasRole('ROLE_USER')")
     public Slice<UserPostsDto> getUserPosts(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
@@ -115,6 +123,7 @@ public class UserController {
 
 
     //내용 그림 시간
+    @Operation(summary = "유저 댓글 받아오는 API")
     @GetMapping("/my-page/comments")
     @PreAuthorize("hasRole('ROLE_USER')")
     public Slice<MyCommentsDto> getUserComments(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
@@ -127,6 +136,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/reissue")
+    @Operation(summary = "액세스 만료후 토큰 다시 받는 API",description = "반환값 accessToken (액세스 토큰 만료,리프래시 토큰 정상) 일때만 작동합니다.")
     public ResponseEntity<?> reissue(HttpServletRequest httpServletRequest) {
         return userService.reissue(httpServletRequest);
     }

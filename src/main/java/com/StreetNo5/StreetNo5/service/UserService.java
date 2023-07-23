@@ -177,6 +177,17 @@ public class UserService {
 
         return response.fail("토큰 갱신에 실패했습니다.");
     }
+    public ResponseEntity<?> changePassword(String token,String newPassword){
+        if (jwtTokenProvider.validateToken(token)){
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            String encPwd = encoder.encode(newPassword);
+
+            Optional<User> byNickname = userRepository.findByNickname(authentication.getName());
+            byNickname.get().passwordUpdate(encPwd);
+            return response.success("비밀번호가 변경 되었습니다.");
+        }
+        return response.fail("비밀번호 변경에 실패했습니다.");
+    }
 
 
     public List<UserPost> getUserPosts(String nickname){
@@ -190,7 +201,7 @@ public class UserService {
     public ResponseEntity<?> changeNickName(String token,String userNickname,String newNickname)
     {
         Optional<User> user = userRepository.findByNickname(userNickname);
-        user.get().update(newNickname);
+        user.get().nicknameUpdate(newNickname);
         userRepository.save(user.get());
         logout(token);
         return response.success();
