@@ -1,7 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,8 +27,8 @@ public class UserFindPostController {
 
     @Operation(summary = "주변 게시물 찾기 API")
     @GetMapping("/find-near-post/{lat}/{lng}/{tags}")
-    public Slice<UserPostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable
-    ,@PathVariable Double lat,@PathVariable Double lng,@PathVariable String tags) {
+    public Slice<PostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable
+    , @PathVariable Double lat, @PathVariable Double lng, @PathVariable String tags) {
         List<UserPost> userPostData= userPostService.getUserPostList();
         List<UserPost> userPostList = new ArrayList<>();
         Long tags_num=convertTags(tags);
@@ -65,10 +65,10 @@ public class UserFindPostController {
         return Long.parseLong(tags,2);
     }
 
-    private Slice<UserPostsDto> getUserPostsDto(Pageable pageable, List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = new ArrayList<>();
+    private Slice<PostsDto> getUserPostsDto(Pageable pageable, List<UserPost> userPosts) {
+        List<PostsDto> userPostsLists = new ArrayList<>();
         for (UserPost userPost : userPosts){
-            UserPostsDto userPostsDto=new UserPostsDto();
+            PostsDto userPostsDto=new PostsDto();
             userPostsDto.setId(userPost.getId());
             userPostsDto.setImageUrl(userPost.getImageUrl());
             userPostsLists.add(userPostsDto);
@@ -79,7 +79,7 @@ public class UserFindPostController {
         if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
             hasNext = true;
         }
-        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
+        Slice<PostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
         return slice;
     }
 

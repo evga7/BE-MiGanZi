@@ -2,8 +2,8 @@ package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.UserPostDto;
-import com.StreetNo5.StreetNo5.domain.dto.UserPostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.PostDto;
+import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
@@ -38,7 +38,7 @@ public class BoardController {
     //@PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "전체 게시물 조회 API")
     @GetMapping("/posts")
-    public Slice<UserPostsDto> getBoardList(
+    public Slice<PostsDto> getBoardList(
             @PageableDefault (size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable) {
         List<UserPost> userPosts = userPostService.getUserPosts();
         return getUsersPostsDto(pageable,userPosts);
@@ -48,7 +48,7 @@ public class BoardController {
 
     @Operation(summary = "인기 게시물(조회수 기준) 5개 조회 API")
     @GetMapping("/popular-post")
-    public List<UserPostDto> getPopularPost()
+    public List<PostDto> getPopularPost()
     {
         List<UserPost> userPolarPost = userPostService.getUserPolarPost();
         return ConvertPopularDto(userPolarPost);
@@ -91,22 +91,22 @@ public class BoardController {
 
 
 
-    private Slice<UserPostsDto> getUsersPostsDto(Pageable pageable, List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = ConvertDto(userPosts);
+    private Slice<PostsDto> getUsersPostsDto(Pageable pageable, List<UserPost> userPosts) {
+        List<PostsDto> userPostsLists = ConvertDto(userPosts);
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), userPostsLists.size());
         boolean hasNext = false;
         if (userPostsLists.size()- pageable.getPageSize() > pageable.getOffset()) {
             hasNext = true;
         }
-        Slice<UserPostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
+        Slice<PostsDto> slice = new SliceImpl<>(userPostsLists.subList(start, end), pageable, hasNext);
         return slice;
     }
 
-    private List<UserPostsDto> ConvertDto(List<UserPost> userPosts) {
-        List<UserPostsDto> userPostsLists = new ArrayList<>();
+    private List<PostsDto> ConvertDto(List<UserPost> userPosts) {
+        List<PostsDto> userPostsLists = new ArrayList<>();
         for (UserPost userPost : userPosts){
-            UserPostsDto userPostsDto=new UserPostsDto();
+            PostsDto userPostsDto=new PostsDto();
             userPostsDto.setId(userPost.getId());
             userPostsDto.setImageUrl(userPost.getImageUrl());
             userPostsLists.add(userPostsDto);
@@ -125,10 +125,10 @@ public class BoardController {
         return Long.parseLong(tags,2);
     }
 
-    private List<UserPostDto> ConvertPopularDto(List<UserPost> userPosts) {
-        List<UserPostDto> userPostsLists = new ArrayList<>();
+    private List<PostDto> ConvertPopularDto(List<UserPost> userPosts) {
+        List<PostDto> userPostsLists = new ArrayList<>();
         for (UserPost userPost : userPosts){
-            UserPostDto userPostsDto=new UserPostDto();
+            PostDto userPostsDto=new PostDto();
             userPostsDto.setId(userPost.getId());
             userPostsDto.setNickname(userPost.getUser().getNickname());
             userPostsDto.setViewCount(userPost.getViewCount());
