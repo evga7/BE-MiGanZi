@@ -78,6 +78,7 @@ public class BoardController {
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
                 .tags_num(convertTags(userPost.getTags()))
+                .address_name(userPost.getAddress_name())
                 .music_id(userPost.getMusic_id())
                 .build();
         Optional<User> user = userService.findUser(nickname);
