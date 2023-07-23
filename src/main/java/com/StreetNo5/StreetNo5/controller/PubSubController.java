@@ -8,10 +8,16 @@ import com.StreetNo5.StreetNo5.service.UserService;
 import com.StreetNo5.StreetNo5.service.redis.RedisPublisher;
 import com.StreetNo5.StreetNo5.service.redis.RedisSubscriber;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -50,9 +56,9 @@ public class PubSubController {
 
     @Operation(summary = "유저 알림 정보 확인 API")
     @GetMapping("/user-alert")
-    public List<UserAlert> getUserAlert(@RequestHeader(value = "Authorization") String token){
-        List<UserAlert> byNickname = userAlertRedisRepository.findByNickname(getUserNicknameFromJwtToken(token));
-        return byNickname;
+    public Slice<UserAlert> getUserAlert(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true)Pageable pageable, @RequestHeader(value = "Authorization") String token){
+        List<UserAlert> userAlerts = userAlertRedisRepository.findByNickname(getUserNicknameFromJwtToken(token));
+        return getUserAlertCommentsDto(pageable,userAlerts);
     }
 
     // 신규 Topic을 생성하고 Listener등록 및 Topic Map에 저장
@@ -88,4 +94,16 @@ public class PubSubController {
         String nickname = payloadStr.split(":")[1].replace("\"", "").split(",")[0];
         return nickname;
     }
+
+    private Slice<UserAlert> getUserAlertCommentsDto(Pageable pageable, List<UserAlert> userAlerts) {
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), userAlerts.size());
+        boolean hasNext = false;
+        if (userAlerts.size()- pageable.getPageSize() > pageable.getOffset()) {
+            hasNext = true;
+        }
+        Slice<UserAlert> slice = new SliceImpl<>(userAlerts.subList(start, end), pageable, hasNext);
+        return slice;
+    }
+
 }

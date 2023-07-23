@@ -112,7 +112,7 @@ public class UserController {
     public UserWritesDto getUserPosts(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
                                       @RequestHeader(value = "Authorization") String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
-        // todo jwt 검증후 return
+        // jwt 검증 return 필요없음 따로 하는듯
         List<UserPost> userPosts = userService.getUserPosts(userNicknameFromJwtToken);
         Slice<PostsDto> usersPostsDto = getUsersPostsDto(pageable, userPosts);
         UserWritesDto userWritesDto = new UserWritesDto();
