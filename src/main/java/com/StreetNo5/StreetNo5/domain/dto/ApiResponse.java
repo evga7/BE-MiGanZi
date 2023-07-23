@@ -53,14 +53,14 @@ public class ApiResponse {
                     .message(message)
                     .errors(errors)
                     .build(),
-                    HttpStatus.OK);
+                    HttpStatus.BAD_REQUEST);
         }
         else if (status.equals(STATUS_ERROR)) {
             return new ResponseEntity<>(ErroredBody.builder()
                     .status(status)
                     .message(message)
                     .build(),
-                    HttpStatus.OK);
+                    HttpStatus.BAD_REQUEST);
         }
 
         else {
