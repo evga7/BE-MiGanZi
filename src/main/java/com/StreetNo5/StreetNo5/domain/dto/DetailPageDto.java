@@ -21,5 +21,7 @@ public class DetailPageDto {
     private String tags;
     private String music_id;
     private String nickname;
+    private String createdDate;
+    private String modifiedDate;
     private List<UserComment> userComments=new ArrayList<>();
 }

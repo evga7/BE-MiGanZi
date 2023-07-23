@@ -78,6 +78,8 @@ public class BoardController {
                 .music_id(userPost.getMusic_id())
                 .nickname(userPost.getUser().getNickname())
                 .userComments(userPost.getUserComments())
+                .createdDate(userPost.getCreatedDate())
+                .modifiedDate(userPost.getModifiedDate())
                 .build();
     }
 
