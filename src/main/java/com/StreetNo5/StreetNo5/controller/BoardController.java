@@ -4,6 +4,7 @@ import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.domain.dto.DetailPageDto;
 import com.StreetNo5.StreetNo5.domain.dto.PostDto;
 import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
@@ -63,9 +64,21 @@ public class BoardController {
 
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
     @GetMapping("/{id}")
-    public UserPost getPost(@PathVariable Long id) {
+    public DetailPageDto getPost(@PathVariable Long id) {
+        UserPost userPost = userPostService.getUserPost(id);
         userPostService.updateView(id);
-        return userPostService.getUserPost(id);
+        return DetailPageDto.builder()
+                .id(userPost.getId())
+                .viewCount(userPost.getViewCount())
+                .commentCount(userPost.getCommentCount())
+                .content(userPost.getContent())
+                .imageUrl(userPost.getImageUrl())
+                .address_name(userPost.getAddress_name())
+                .tags(userPost.getTags())
+                .music_id(userPost.getMusic_id())
+                .nickname(userPost.getUser().getNickname())
+                .userComments(userPost.getUserComments())
+                .build();
     }
 
     @Operation(summary = "게시글 작성 API")
@@ -139,16 +152,16 @@ public class BoardController {
     private List<PostDto> ConvertPopularDto(List<UserPost> userPosts) {
         List<PostDto> userPostsLists = new ArrayList<>();
         for (UserPost userPost : userPosts){
-            PostDto userPostsDto=new PostDto();
-            userPostsDto.setId(userPost.getId());
-            userPostsDto.setNickname(userPost.getUser().getNickname());
-            userPostsDto.setViewCount(userPost.getViewCount());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
-            userPostsDto.setContent(userPost.getContent());
-            userPostsDto.setAddress_name(userPost.getAddress_name());
-            userPostsDto.setModifiedDate(userPost.getModifiedDate());
-            userPostsDto.setTags(userPost.getTags());
-            userPostsLists.add(userPostsDto);
+            userPostsLists.add(PostDto.builder()
+                    .id(userPost.getId())
+                    .nickname(userPost.getUser().getNickname())
+                    .viewCount(userPost.getViewCount())
+                    .imageUrl(userPost.getImageUrl())
+                    .content(userPost.getContent())
+                    .address_name(userPost.getAddress_name())
+                    .modifiedDate(userPost.getModifiedDate())
+                    .tags(userPost.getTags())
+                    .createdDate(userPost.getCreatedDate()).build());
         }
         return userPostsLists;
     }
