@@ -63,6 +63,7 @@ public class JwtTokenProvider {
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpirationTime(ExpireTime.ACCESS_TOKEN_EXPIRE_TIME)
+                .nickname(name)
                 .build();
     }
 
@@ -97,6 +98,7 @@ public class JwtTokenProvider {
                 .accessTokenExpirationTime(ExpireTime.ACCESS_TOKEN_EXPIRE_TIME)
                 .refreshToken(refreshToken)
                 .refreshTokenExpirationTime(ExpireTime.REFRESH_TOKEN_EXPIRE_TIME)
+                .nickname(name)
                 .build();
     }
 
