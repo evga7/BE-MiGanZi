@@ -8,4 +8,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByNickname(String nickname);
     boolean existsUsersByNickname(String nickname);
+
+/*    @Transactional
+    @Modifying
+    @Query(value = "update user p set p.password =:newPassword where p.nickname=:nickname",nativeQuery = true)
+    void updatePassword(@Param("nickname") String nickname,@Param("password")String newPassword);*/
 }

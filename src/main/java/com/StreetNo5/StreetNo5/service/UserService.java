@@ -182,8 +182,11 @@ public class UserService {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             String encPwd = encoder.encode(newPassword);
 
-            Optional<User> byNickname = userRepository.findByNickname(authentication.getName());
-            byNickname.get().passwordUpdate(encPwd);
+            Optional<User> user = userRepository.findByNickname(authentication.getName());
+            if (!user.isPresent()){
+                return response.fail("유저가 존재하지 않습니다.");
+            }
+            user.get().passwordUpdate(encPwd);
             return response.success("비밀번호가 변경 되었습니다.");
         }
         return response.fail("비밀번호 변경에 실패했습니다.");
@@ -200,11 +203,23 @@ public class UserService {
     }
     public ResponseEntity<?> changeNickName(String token,String userNickname,String newNickname)
     {
+        if (!jwtTokenProvider.validateToken(token)){
+            return response.fail("토큰이 유효하지 않습니다.");
+        }
         Optional<User> user = userRepository.findByNickname(userNickname);
+        if (!user.isPresent()){
+            return response.fail("유저가 존재하지 않습니다.");
+        }
+        if (userRepository.findByNickname(newNickname).isPresent()){
+            return response.fail("유저 닉네임 설정 오류");
+        }
+        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, newNickname);
         user.get().nicknameUpdate(newNickname);
-        userRepository.save(user.get());
         logout(token);
-        return response.success();
+        // 기존 토큰을 또 사용하다 보니 버그 발견
+        return response.success("닉네임 설정 변경 성공",tokenInfo);
+
     }
 
     public boolean checkNickNameExists(String nickname) {

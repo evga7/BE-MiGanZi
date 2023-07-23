@@ -41,6 +41,9 @@ public class JwtTokenProvider {
     public UserResponseDto.TokenInfo generateToken(Authentication authentication) {
         return generateToken(authentication.getName(), authentication.getAuthorities());
     }
+    public UserResponseDto.TokenInfo generateToken(Authentication authentication,String newNickname) {
+        return generateToken(newNickname, authentication.getAuthorities());
+    }
     public UserResponseDto.TokenInfo generateAccessToken(String name,
                                                    Collection<? extends GrantedAuthority> inputAuthorities) {
         //권한 가져오기
