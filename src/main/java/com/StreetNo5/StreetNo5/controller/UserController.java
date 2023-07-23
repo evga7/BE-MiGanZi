@@ -70,10 +70,10 @@ public class UserController {
 
     @Operation(summary = "회원탈퇴 API")
     @PostMapping("/withdrawal")
-    public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token)
+    public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token,String checkNickname)
     {
         String nickname = getUserNicknameFromJwtToken(token);
-        ResponseEntity<?> withdrawal = userService.withdrawal(token.substring(7), nickname);
+        ResponseEntity<?> withdrawal = userService.withdrawal(token.substring(7), nickname,checkNickname);
         //TODO deleteRomm 검증후 delete
         pubSubController.deleteRoom(nickname);
         return withdrawal;

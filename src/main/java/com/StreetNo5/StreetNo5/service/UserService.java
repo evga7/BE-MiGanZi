@@ -91,9 +91,9 @@ public class UserService {
         return response.success("로그아웃 되었습니다.");
     }
 
-    public ResponseEntity<?> withdrawal(String token,String nickname) {
+    public ResponseEntity<?> withdrawal(String token,String nickname,String checkNickname) {
         // 1. Access Token 검증
-        if (!jwtTokenProvider.validateToken(token)) {
+        if (!jwtTokenProvider.validateToken(token) || !nickname.equals(checkNickname)) {
             return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
         }
 
