@@ -42,7 +42,6 @@ public class SecurityConfig {
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
-                .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(securityConfigProperties.PERMIT_ALL_REQUEST_MATCHERS).permitAll()
                 //.requestMatchers(securityConfigProperties.ADMIN_REQUEST_MATCHERS).hasRole("ADMIN")

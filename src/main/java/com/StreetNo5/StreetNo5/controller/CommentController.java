@@ -1,6 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
+import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.UserAlert;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
@@ -10,10 +11,10 @@ import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import com.StreetNo5.StreetNo5.service.redis.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,11 +32,14 @@ public class CommentController {
     private final UserService userService;
     private final PubSubController pubSubController;
     private final RedisService redisService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "댓글 작성 API")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/comment/write")
-    public List<UserComment> write_comment(Long postId, String content, @RequestHeader(value = "Authorization") String token){
+    public List<UserComment> write_comment(Long postId, String content, HttpServletRequest httpServletRequest){
+        String token = jwtTokenProvider.resolveToken(httpServletRequest);
+        jwtTokenProvider.validateToken(token);
         UserComment userComment = new UserComment();
         userComment.setContent(content);
         UserPost userPost = userPostService.getUserPost(postId);

@@ -1,5 +1,6 @@
 package com.StreetNo5.StreetNo5.controller;
 
+import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
@@ -10,6 +11,7 @@ import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class BoardController {
     private final UserPostService userPostService;
     private final GCSService gcsService;
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     //@PreAuthorize("hasRole('ROLE_USER')")
@@ -67,8 +70,10 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post/write")
-    public ResponseEntity<?> writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
+    public ResponseEntity<?> writePost(UserPost userPost, HttpServletRequest httpServletRequest, MultipartFile imageFile) throws IOException {
+        String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
+        jwtTokenProvider.validateToken(token);
         if (imageFile==null)
         {
             throw new IllegalArgumentException("이미지는 필수입니다.");
