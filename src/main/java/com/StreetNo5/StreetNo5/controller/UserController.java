@@ -79,6 +79,13 @@ public class UserController {
         return withdrawal;
     }
 
+    @Operation(summary = "비밀번호 변경 API")
+    @PostMapping("/update-password")
+    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") String token,String newPassword)
+    {
+        return userService.changePassword(token.substring(7),newPassword);
+    }
+
 
     @Operation(summary = "닉네임 조건 확인 API",description = "반환값 String, 닉네임 존재시 extis," +
             "빈값 empty," +
