@@ -2,6 +2,7 @@ package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.PostDto;
 import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
@@ -10,12 +11,13 @@ import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,11 +27,13 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/user/board")
 @RequiredArgsConstructor
 public class BoardController {
 
+    private final ApiResponse apiResponse;
     private final UserPostService userPostService;
     private final GCSService gcsService;
     private final UserService userService;
@@ -63,8 +67,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post/write")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public String writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
+    public ResponseEntity<?> writePost(UserPost userPost, @RequestHeader(value = "Authorization") String token, MultipartFile imageFile) throws IOException {
         String nickname = getUserNicknameFromJwtToken(token);
         if (imageFile==null)
         {
@@ -82,11 +85,14 @@ public class BoardController {
                 .music_id(userPost.getMusic_id())
                 .build();
         Optional<User> user = userService.findUser(nickname);
+        if (!user.isPresent()){
+            return apiResponse.fail("유저 에러");
+        }
         User user1 = user.get();
         user1.addPost(post);
         post.setUser(user.get());
         userPostService.writePost(post);
-        return "OK";
+        return apiResponse.success("성공");
     }
 
 
