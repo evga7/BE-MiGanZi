@@ -60,7 +60,7 @@ public class CommentController {
             redisService.saveUserAlert(UserAlert.builder()
                     .createdDate(userComment.getCreatedDate())
                     .title("댓글이 등록되었습니다.")
-                    .nickname(userPost.getUser().getNickname())
+                    .userId(userPost.getUser().getId())
                     .message(userComment.getContent())
                     .build());
         }

@@ -22,6 +22,6 @@ public class UserAlert {
     private String createdDate;
 
     @Indexed
-    private String nickname;
+    private Long userId;
 
 }

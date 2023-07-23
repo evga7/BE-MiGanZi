@@ -8,5 +8,5 @@ import java.util.List;
 
 @EnableRedisRepositories
 public interface UserAlertRedisRepository extends CrudRepository<UserAlert,String> {
-    List<UserAlert> findByNickname(String nickname);
+    List<UserAlert> findByUserId(Long UserId);
 }
