@@ -15,5 +15,6 @@ public class UserResponseDto {
         private Long accessTokenExpirationTime;
         private String refreshToken;
         private Long refreshTokenExpirationTime;
+        private String nickname;
     }
 }
