@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserPostsDto {
+public class PostsDto {
     private Long id;
     private String imageUrl;
 }

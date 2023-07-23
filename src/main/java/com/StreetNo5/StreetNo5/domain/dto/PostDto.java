@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserPostDto {
+public class PostDto {
     private Long id;
     private String nickname;
     private Long viewCount=0L;
