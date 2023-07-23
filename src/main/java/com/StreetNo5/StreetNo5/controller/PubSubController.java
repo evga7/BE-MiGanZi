@@ -1,7 +1,9 @@
 package com.StreetNo5.StreetNo5.controller;
 
+import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.config.redis.UserAlert;
 import com.StreetNo5.StreetNo5.domain.User;
+import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.RoomMessage;
 import com.StreetNo5.StreetNo5.domain.dto.UserAlertDto;
 import com.StreetNo5.StreetNo5.repository.UserAlertRedisRepository;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -40,6 +43,8 @@ public class PubSubController {
     // topic 이름으로 topic정보를 가져와 메시지를 발송할 수 있도록 Map에 저장
     private Map<String, ChannelTopic> channels;
     private final UserAlertRedisRepository userAlertRedisRepository;
+    private final ApiResponse apiResponse;
+    private final JwtTokenProvider jwtTokenProvider;
     @PostConstruct
     public void init() {
         // topic 정보를 담을 Map을 초기화
@@ -56,16 +61,17 @@ public class PubSubController {
 
     @Operation(summary = "유저 알림 정보 확인 API")
     @GetMapping("/user-alert")
-    public Slice<UserAlertDto> getUserAlert(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.ASC) @Parameter(hidden = true)Pageable pageable, @RequestHeader(value = "Authorization") String token){
+    public ResponseEntity<?> getUserAlert(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.ASC) @Parameter(hidden = true)Pageable pageable, @RequestHeader(value = "Authorization") String token){
         String nickname = getUserNicknameFromJwtToken(token);
         Optional<User> user = userService.findUser(nickname);
-        if (!user.isPresent())
+        if (!user.isPresent() || !jwtTokenProvider.validateToken(token.substring(7)))
         {
-            throw new IllegalArgumentException("유저가 없습니다");
+            return apiResponse.fail("유저가 존재하지 않거나 토큰이 유효하지 않습니다.");
         }
         List<UserAlert> userAlerts = userAlertRedisRepository.findByUserId(user.get().getId());
         userAlerts.sort(Comparator.comparing(UserAlert::getCreatedDate).reversed());
-        return getUserAlertCommentsDto(pageable,userAlerts);
+        Slice<UserAlertDto> userAlertCommentsDto = getUserAlertCommentsDto(pageable, userAlerts);
+        return apiResponse.success(userAlertCommentsDto);
     }
 
     // 신규 Topic을 생성하고 Listener등록 및 Topic Map에 저장
