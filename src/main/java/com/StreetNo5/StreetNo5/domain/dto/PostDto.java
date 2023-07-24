@@ -19,6 +19,7 @@ public class PostDto {
     private String createdDate;
     private String modifiedDate;
     private String music_id;
+    private String profileImage;
 
 
 }

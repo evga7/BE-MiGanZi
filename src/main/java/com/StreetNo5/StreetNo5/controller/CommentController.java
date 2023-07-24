@@ -13,6 +13,7 @@ import com.StreetNo5.StreetNo5.service.redis.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,8 @@ public class CommentController {
     private final PubSubController pubSubController;
     private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;
+    @Value("${profile.image.url}")
+    private String profileImage;
 
     @Operation(summary = "댓글 작성 API")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -51,6 +54,7 @@ public class CommentController {
         User user1 = user.get();
         user1.addComment(userComment);
         userComment.setUser(user1);
+        userComment.setProfileImage(profileImage);
         userPostService.updateCommentCount(postId);
         commentService.write_comment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
