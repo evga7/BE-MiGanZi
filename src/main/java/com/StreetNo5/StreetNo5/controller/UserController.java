@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -114,6 +115,7 @@ public class UserController {
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // jwt 검증 return 필요없음 따로 하는듯
         List<UserPost> userPosts = userService.getUserPosts(userNicknameFromJwtToken);
+        userPosts.sort(Comparator.comparing(UserPost::getModifiedDate).reversed());
         Slice<PostsDto> usersPostsDto = getUsersPostsDto(pageable, userPosts);
         UserWritesDto userWritesDto = new UserWritesDto();
         userWritesDto.setPostsDto(usersPostsDto);
@@ -130,6 +132,7 @@ public class UserController {
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // todo jwt 검증후 return
         List<UserComment> userCommentsInfo = userService.getUserComments(userNicknameFromJwtToken);
+        userCommentsInfo.sort(Comparator.comparing(UserComment::getModifiedDate).reversed());
         Slice<MyCommentsDto> MyCommentsDto = getUserCommentsDto(pageable, userCommentsInfo);
         UserCommentsDto userCommentsDto = new UserCommentsDto();
         userCommentsDto.setMyCommentsDto(MyCommentsDto);
