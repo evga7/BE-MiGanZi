@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -41,6 +42,8 @@ public class BoardController {
     private final GCSService gcsService;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    @Value("${profile.image.url}")
+    private String profileImage;
 
 
     //@PreAuthorize("hasRole('ROLE_USER')")
@@ -73,6 +76,7 @@ public class BoardController {
                 .commentCount(userPost.getCommentCount())
                 .content(userPost.getContent())
                 .imageUrl(userPost.getDetailImageUrl())
+                .profileImage(userPost.getProfileImage())
                 .address_name(userPost.getAddress_name())
                 .tags(userPost.getTags())
                 .music_id(userPost.getMusic_id())
@@ -102,6 +106,7 @@ public class BoardController {
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
+                .profileImage(profileImage)
                 .tagsNum(convertTags(userPost.getTags()))
                 .address_name(userPost.getAddress_name())
                 .music_id(userPost.getMusic_id())
@@ -162,6 +167,7 @@ public class BoardController {
                     .viewCount(userPost.getViewCount())
                     .imageUrl(userPost.getDetailImageUrl())
                     .content(userPost.getContent())
+                    .profileImage(userPost.getProfileImage())
                     .address_name(userPost.getAddress_name())
                     .modifiedDate(userPost.getModifiedDate())
                     .tags(userPost.getTags())

@@ -31,6 +31,7 @@ public class UserPost extends BaseTimeEntity{
     private String address_name;
     private String tags;
     private Long tagsNum;
+    private String profileImage;
     private String music_id;
 
 

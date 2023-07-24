@@ -22,6 +22,7 @@ public class UserComment extends BaseTimeEntity{
     @NotEmpty(message = "댓글을 입력해주세요")
     @Size(min = 1,max = 60,message = "댓글은 1~60자 사이로 입력해주세요.")
     private String content;
+    private String profileImage;
 
     @ManyToOne
     @JoinColumn(name = "post_id")

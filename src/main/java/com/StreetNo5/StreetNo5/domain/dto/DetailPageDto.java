@@ -23,5 +23,6 @@ public class DetailPageDto {
     private String nickname;
     private String createdDate;
     private String modifiedDate;
+    private String profileImage;
     private List<UserComment> userComments=new ArrayList<>();
 }
