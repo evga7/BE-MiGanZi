@@ -171,6 +171,10 @@ public class UserService {
 
                         return response.success(tokenInfo);
                     }
+                    else
+                    {
+                        return response.fail("새로운곳에서 로그인하여 실패했습니다.");
+                    }
                 }
             }
         }
