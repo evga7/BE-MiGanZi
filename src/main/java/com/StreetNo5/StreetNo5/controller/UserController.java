@@ -175,7 +175,7 @@ public class UserController {
             MyCommentsDto myCommentsDto = MyCommentsDto.builder()
                     .content(userComment.getContent())
                     .post_id(userComment.getUserPost().getId())
-                    .image_url(userComment.getUserPost().getImageUrl())
+                    .image_url(userComment.getUserPost().getThumbnailImageUrl())
                     .modifiedDate(userComment.getModifiedDate())
                     .build();
             myCommentsDtos.add(myCommentsDto);
@@ -203,7 +203,7 @@ public class UserController {
         for (UserPost userPost : userPosts){
             PostsDto userPostsDto=new PostsDto();
             userPostsDto.setId(userPost.getId());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsDto.setImageUrl(userPost.getThumbnailImageUrl());
             userPostsLists.add(userPostsDto);
         }
         return userPostsLists;
