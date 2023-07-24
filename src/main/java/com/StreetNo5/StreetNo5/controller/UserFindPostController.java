@@ -70,7 +70,7 @@ public class UserFindPostController {
         for (UserPost userPost : userPosts){
             PostsDto userPostsDto=new PostsDto();
             userPostsDto.setId(userPost.getId());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsDto.setImageUrl(userPost.getThumbnailImageUrl());
             userPostsLists.add(userPostsDto);
         }
         final int start = (int) pageable.getOffset();

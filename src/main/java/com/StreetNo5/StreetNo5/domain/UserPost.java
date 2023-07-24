@@ -13,6 +13,8 @@ import java.util.List;
 @Entity
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserPost extends BaseTimeEntity{
     @Id
     @Column(name="post_id")
@@ -22,7 +24,8 @@ public class UserPost extends BaseTimeEntity{
     private Long commentCount=0L;
     @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
     private String content;
-    private String imageUrl;
+    private String detailImageUrl;
+    private String thumbnailImageUrl;
     private Double lat;
     private Double lng;
     private String address_name;
@@ -32,19 +35,7 @@ public class UserPost extends BaseTimeEntity{
 
 
 
-    @Builder
-    public UserPost(String content,String imageUrl,Double lat,Double lng,String address_name
-            ,String tags,String music_id,Long tags_num) {
-        this.content=content;
-        this.imageUrl=imageUrl;
-        this.lat=lat;
-        this.lng=lng;
-        this.tags=tags;
-        this.tagsNum =tags_num;
-        this.address_name=address_name;
-        this.music_id=music_id;
 
-    }
     public void addComment(UserComment userComment)
     {
         userComments.add(userComment);

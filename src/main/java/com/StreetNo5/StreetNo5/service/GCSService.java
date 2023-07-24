@@ -19,19 +19,41 @@ public class GCSService {
     @Value("${gcp.bucket.url}")
     private String bucketUrl;
     private final Storage storage;
-    public String updateMemberInfo(MultipartFile multipartFile) throws IOException {
+    private final PostImgFileService postImgFileService;
+
+    public String uploadDetailImage(MultipartFile multipartFile) throws IOException {
         // !!!!!!!!!!!이미지 업로드 관련 부분!!!!!!!!!!!!!!!
-        String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
         String ext = multipartFile.getContentType(); // 파일의 형식 ex) JPG
+        MultipartFile detailImage = postImgFileService.resizeAttachment(multipartFile.getName(),"jpg" , multipartFile, 350, 467);
+
+        String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
         // Cloud에 이미지 업로드
         BlobInfo blobInfo = storage.create(
                 BlobInfo.newBuilder(bucketName, uuid)
                         .setContentType(ext)
                         .build(),
-                multipartFile.getInputStream()
+                detailImage.getInputStream()
         );
 
         return bucketUrl+uuid;
     }
+
+    public String uploadThumbnailImage(MultipartFile multipartFile) throws IOException {
+        // !!!!!!!!!!!이미지 업로드 관련 부분!!!!!!!!!!!!!!!
+        String ext = multipartFile.getContentType(); // 파일의 형식 ex) JPG
+        MultipartFile thumbnailImage = postImgFileService.resizeAttachment(multipartFile.getName(), "jpg", multipartFile, 126, 169);
+
+        String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
+        // Cloud에 이미지 업로드
+        BlobInfo blobInfo = storage.create(
+                BlobInfo.newBuilder(bucketName, uuid)
+                        .setContentType(ext)
+                        .build(),
+                thumbnailImage.getInputStream()
+        );
+
+        return bucketUrl+uuid;
+    }
+
 
 }

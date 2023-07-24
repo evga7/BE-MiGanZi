@@ -72,7 +72,7 @@ public class BoardController {
                 .viewCount(userPost.getViewCount())
                 .commentCount(userPost.getCommentCount())
                 .content(userPost.getContent())
-                .imageUrl(userPost.getImageUrl())
+                .imageUrl(userPost.getDetailImageUrl())
                 .address_name(userPost.getAddress_name())
                 .tags(userPost.getTags())
                 .music_id(userPost.getMusic_id())
@@ -93,14 +93,16 @@ public class BoardController {
         {
             throw new IllegalArgumentException("이미지는 필수입니다.");
         }
-        String imageUrl = gcsService.updateMemberInfo(imageFile);
+        String detailImageUrl = gcsService.uploadDetailImage(imageFile);
+        String thumbnailImageUrl = gcsService.uploadThumbnailImage(imageFile);
         UserPost post = UserPost.builder()
                 .content(userPost.getContent())
-                .imageUrl(imageUrl)
+                .detailImageUrl(detailImageUrl)
+                .thumbnailImageUrl(thumbnailImageUrl)
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
-                .tags_num(convertTags(userPost.getTags()))
+                .tagsNum(convertTags(userPost.getTags()))
                 .address_name(userPost.getAddress_name())
                 .music_id(userPost.getMusic_id())
                 .build();
@@ -134,7 +136,7 @@ public class BoardController {
         for (UserPost userPost : userPosts){
             PostsDto userPostsDto=new PostsDto();
             userPostsDto.setId(userPost.getId());
-            userPostsDto.setImageUrl(userPost.getImageUrl());
+            userPostsDto.setImageUrl(userPost.getThumbnailImageUrl());
             userPostsLists.add(userPostsDto);
         }
         return userPostsLists;
@@ -158,7 +160,7 @@ public class BoardController {
                     .id(userPost.getId())
                     .nickname(userPost.getUser().getNickname())
                     .viewCount(userPost.getViewCount())
-                    .imageUrl(userPost.getImageUrl())
+                    .imageUrl(userPost.getDetailImageUrl())
                     .content(userPost.getContent())
                     .address_name(userPost.getAddress_name())
                     .modifiedDate(userPost.getModifiedDate())
