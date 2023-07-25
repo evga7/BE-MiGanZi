@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,7 @@ public class PubSubController {
         Optional<User> user = userService.findUser(nickname);
         if (!user.isPresent() || !jwtTokenProvider.validateToken(token.substring(7)))
         {
-            return apiResponse.fail("유저가 존재하지 않거나 토큰이 유효하지 않습니다.");
+            return apiResponse.fail("유저가 존재하지 않거나 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
         List<UserAlert> userAlerts = userAlertRedisRepository.findByUserId(user.get().getId());
         userAlerts.sort(Comparator.comparing(UserAlert::getCreatedDate).reversed());
