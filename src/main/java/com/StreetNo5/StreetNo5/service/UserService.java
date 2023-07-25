@@ -119,7 +119,7 @@ public class UserService {
         else{
             return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
         }
-        return response.success("회원탈퇴 되었습니다.");
+        return response.success("회원탈퇴 되었습니다.",HttpStatus.ACCEPTED);
     }
 
     public Long signup(SignupForm signupForm) {
@@ -173,13 +173,13 @@ public class UserService {
                     }
                     else
                     {
-                        return response.fail("새로운곳에서 로그인하여 실패했습니다.");
+                        return response.fail("새로운곳에서 로그인하여 실패했습니다.",HttpStatus.BAD_REQUEST);
                     }
                 }
             }
         }
 
-        return response.fail("토큰 갱신에 실패했습니다.");
+        return response.fail("토큰 갱신에 실패했습니다.",HttpStatus.BAD_REQUEST);
     }
     public ResponseEntity<?> changePassword(String token,String newPassword){
         if (jwtTokenProvider.validateToken(token)){
@@ -188,12 +188,12 @@ public class UserService {
 
             Optional<User> user = userRepository.findByNickname(authentication.getName());
             if (!user.isPresent()){
-                return response.fail("유저가 존재하지 않습니다.");
+                return response.fail("유저가 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
             }
             user.get().passwordUpdate(encPwd);
-            return response.success("비밀번호가 변경 되었습니다.");
+            return response.success("비밀번호가 변경 되었습니다.",HttpStatus.ACCEPTED);
         }
-        return response.fail("비밀번호 변경에 실패했습니다.");
+        return response.fail("비밀번호 변경에 실패했습니다.",HttpStatus.BAD_REQUEST);
     }
 
 
@@ -208,14 +208,14 @@ public class UserService {
     public ResponseEntity<?> changeNickName(String token,String userNickname,String newNickname)
     {
         if (!jwtTokenProvider.validateToken(token)){
-            return response.fail("토큰이 유효하지 않습니다.");
+            return response.fail("토큰이 유효하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
         Optional<User> user = userRepository.findByNickname(userNickname);
         if (!user.isPresent()){
-            return response.fail("유저가 존재하지 않습니다.");
+            return response.fail("유저가 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
         if (userRepository.findByNickname(newNickname).isPresent()){
-            return response.fail("유저 닉네임 설정 오류");
+            return response.fail("유저 닉네임 설정 오류",HttpStatus.BAD_REQUEST);
         }
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
         UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, newNickname);

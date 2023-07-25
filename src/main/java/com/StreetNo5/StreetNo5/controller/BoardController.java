@@ -21,6 +21,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,10 +94,6 @@ public class BoardController {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
         jwtTokenProvider.validateToken(token);
-        if (imageFile==null)
-        {
-            throw new IllegalArgumentException("이미지는 필수입니다.");
-        }
         String detailImageUrl = gcsService.uploadDetailImage(imageFile);
         String thumbnailImageUrl = gcsService.uploadThumbnailImage(imageFile);
         UserPost post = UserPost.builder()
@@ -113,13 +110,13 @@ public class BoardController {
                 .build();
         Optional<User> user = userService.findUser(nickname);
         if (!user.isPresent()){
-            return apiResponse.fail("유저 에러");
+            return apiResponse.fail("유저 에러", HttpStatus.BAD_REQUEST);
         }
         User user1 = user.get();
         user1.addPost(post);
         post.setUser(user.get());
         userPostService.writePost(post);
-        return apiResponse.success("성공");
+        return apiResponse.success("성공",HttpStatus.ACCEPTED);
     }
 
 
