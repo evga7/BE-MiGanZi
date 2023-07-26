@@ -21,7 +21,8 @@ public class SwaggerConfig {
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()))
                 .info(new Info().title("미간지 API")
-                        .description("미간지 API 명세서 입니다.")
+                        .description("미간지 API 명세서 입니다." +
+                                "토큰이 필요한 작업시 오른쪽에 Authorize 버튼을 눌러 토큰값을 삽입해주세요. POST 기능도 잘 동작합니다.")
                         .version("1.0").contact(new Contact().name("BLUE")));
     }
 
