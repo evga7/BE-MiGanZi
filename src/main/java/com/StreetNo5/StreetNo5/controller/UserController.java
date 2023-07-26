@@ -141,7 +141,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/reissue")
-    @Operation(summary = "액세스 만료후 토큰 다시 받는 API",description = "반환값 accessToken (액세스 토큰 만료,리프래시 토큰 정상) 일때만 작동합니다.")
+    @Operation(summary = "액세스 만료후 토큰 다시 받는 API",description = "요청값 refreshToken (액세스 토큰 제외) 반환값 accessToken (액세스 토큰 만료,리프래시 토큰 정상) 일때만 작동합니다.")
     public ResponseEntity<?> reissue(HttpServletRequest httpServletRequest) {
         return userService.reissue(httpServletRequest);
     }
