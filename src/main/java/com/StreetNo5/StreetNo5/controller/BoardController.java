@@ -7,6 +7,7 @@ import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
 import com.StreetNo5.StreetNo5.domain.dto.DetailPageDto;
 import com.StreetNo5.StreetNo5.domain.dto.PostDto;
 import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.request.UserPostRequestDto;
 import com.StreetNo5.StreetNo5.service.GCSService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
@@ -24,7 +25,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,12 +90,11 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post/write")
-    public ResponseEntity<?> writePost(UserPost userPost, HttpServletRequest httpServletRequest, MultipartFile imageFile) throws IOException {
+    public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) throws IOException {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
-        jwtTokenProvider.validateToken(token);
-        String detailImageUrl = gcsService.uploadDetailImage(imageFile);
-        String thumbnailImageUrl = gcsService.uploadThumbnailImage(imageFile);
+        String detailImageUrl = gcsService.uploadDetailImage(userPost.getImageFile());
+        String thumbnailImageUrl = gcsService.uploadThumbnailImage(userPost.getImageFile());
         UserPost post = UserPost.builder()
                 .content(userPost.getContent())
                 .detailImageUrl(detailImageUrl)

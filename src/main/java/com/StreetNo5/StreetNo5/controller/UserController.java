@@ -5,8 +5,10 @@ import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.*;
-import com.StreetNo5.StreetNo5.service.BoardService;
-import com.StreetNo5.StreetNo5.service.CommentService;
+import com.StreetNo5.StreetNo5.domain.dto.request.LoginForm;
+import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdateNickname;
+import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdatePassword;
+import com.StreetNo5.StreetNo5.domain.dto.request.UserWithdrawal;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,15 +33,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final CommentService commentService;
-    private final BoardService boardService;
     private final PubSubController pubSubController;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
-    public ResponseEntity<?> login(HttpServletRequest request, String nickname, String password) {
+    public ResponseEntity<?> login(HttpServletRequest request, LoginForm loginForm) {
 
-        return userService.login(request, nickname, password);
+        return userService.login(request, loginForm.getNickname(), loginForm.getPassword());
     }
 
     @Operation(summary = "회원가입 API")
@@ -52,36 +52,36 @@ public class UserController {
         return signup;
     }
 
-    @Operation(summary = "닉네임 변경 API")
+    @Operation(summary = "닉네임 변경 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")
     @PostMapping("/update-nickname")
-    public ResponseEntity<?> changeUserNickName(@RequestHeader(value = "Authorization") String token,String newNickname)
+    public ResponseEntity<?> changeUserNickName(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token, UserUpdateNickname userUpdateNickname)
     {
-        return userService.changeNickName(token.substring(7),getUserNicknameFromJwtToken(token),newNickname);
+        return userService.changeNickName(token.substring(7),getUserNicknameFromJwtToken(token),userUpdateNickname.getNewNickname());
     }
 
-    @Operation(summary = "로그아웃 API")
+    @Operation(summary = "로그아웃 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")
     @PostMapping("/logout")
-    public ResponseEntity<?> userLogout(@RequestHeader(value = "Authorization") String token)
+    public ResponseEntity<?> userLogout(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token)
     {
         return userService.logout(token.substring(7));
     }
 
-    @Operation(summary = "회원탈퇴 API")
+    @Operation(summary = "회원탈퇴 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")
     @PostMapping("/withdrawal")
-    public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") String token,String checkNickname)
+    public ResponseEntity<?> userWithdrawal(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token , UserWithdrawal userWithdrawal)
     {
         String nickname = getUserNicknameFromJwtToken(token);
-        ResponseEntity<?> withdrawal = userService.withdrawal(token.substring(7), nickname,checkNickname);
+        ResponseEntity<?> withdrawal = userService.withdrawal(token.substring(7), nickname,userWithdrawal.getCheckNickname());
         //TODO deleteRomm 검증후 delete
         pubSubController.deleteRoom(nickname);
         return withdrawal;
     }
 
-    @Operation(summary = "비밀번호 변경 API")
+    @Operation(summary = "비밀번호 변경 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")
     @PostMapping("/update-password")
-    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") String token,String newPassword)
+    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token, UserUpdatePassword userUpdatePassword)
     {
-        return userService.changePassword(token.substring(7),newPassword);
+        return userService.changePassword(token.substring(7),userUpdatePassword.getNewPassword());
     }
 
 
@@ -111,7 +111,7 @@ public class UserController {
     @Operation(summary = "유저 게시글 받아오는 API",description = "게시물 + numberOfPosts")
     @GetMapping("/my-page/posts")
     public UserWritesDto getUserPosts(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
-                                      @RequestHeader(value = "Authorization") String token){
+                                      @RequestHeader(value = "Authorization") @Parameter(hidden = true) String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // jwt 검증 return 필요없음 따로 하는듯
         List<UserPost> userPosts = userService.getUserPosts(userNicknameFromJwtToken);
@@ -128,7 +128,7 @@ public class UserController {
     @Operation(summary = "유저 댓글 받아오는 API",description = "게시물 + numberOfComments")
     @GetMapping("/my-page/comments")
     public UserCommentsDto getUserComments(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
-                                           @RequestHeader(value = "Authorization") String token){
+                                           @RequestHeader(value = "Authorization") @Parameter(hidden = true) String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // todo jwt 검증후 return
         List<UserComment> userCommentsInfo = userService.getUserComments(userNicknameFromJwtToken);
