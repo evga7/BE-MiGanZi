@@ -6,6 +6,7 @@ import com.StreetNo5.StreetNo5.config.redis.UserAlert;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.domain.dto.request.UserCommentRequestDto;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,14 +38,12 @@ public class CommentController {
     private String profileImage;
 
     @Operation(summary = "댓글 작성 API")
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/comment/write")
-    public List<UserComment> write_comment(Long postId, String content, HttpServletRequest httpServletRequest){
+    public List<UserComment> write_comment(UserCommentRequestDto userCommentRequestDto, HttpServletRequest httpServletRequest){
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
-        jwtTokenProvider.validateToken(token);
         UserComment userComment = new UserComment();
-        userComment.setContent(content);
-        UserPost userPost = userPostService.getUserPost(postId);
+        userComment.setContent(userCommentRequestDto.getContent());
+        UserPost userPost = userPostService.getUserPost(userCommentRequestDto.getPostId());
         String nickname = getUserNicknameFromJwtToken(token);
         userComment.setNickname(nickname);
         userPost.addComment(userComment);
@@ -55,7 +53,7 @@ public class CommentController {
         user1.addComment(userComment);
         userComment.setUser(user1);
         userComment.setProfileImage(profileImage);
-        userPostService.updateCommentCount(postId);
+        userPostService.updateCommentCount(userCommentRequestDto.getPostId());
         commentService.write_comment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
         // 다른사람의 댓글만 알림
