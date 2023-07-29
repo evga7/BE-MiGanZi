@@ -24,10 +24,6 @@ public class UserPostService {
     {
         boardRepository.updatePageView(id);
     }
-    public void updateCommentCount(Long id)
-    {
-        boardRepository.upCommentCount(id);
-    }
     public void writePost(UserPost userPost){
         boardRepository.save(userPost);
     }

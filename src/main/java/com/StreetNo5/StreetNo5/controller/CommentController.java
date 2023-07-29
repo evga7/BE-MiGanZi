@@ -7,6 +7,7 @@ import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserCommentRequestDto;
+import com.StreetNo5.StreetNo5.domain.dto.response.UserListCommentsDto;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
@@ -39,7 +40,7 @@ public class CommentController {
 
     @Operation(summary = "댓글 작성 API")
     @PostMapping("/comment/write")
-    public List<UserComment> write_comment(UserCommentRequestDto userCommentRequestDto, HttpServletRequest httpServletRequest){
+    public UserListCommentsDto write_comment(UserCommentRequestDto userCommentRequestDto, HttpServletRequest httpServletRequest){
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         UserComment userComment = new UserComment();
         userComment.setContent(userCommentRequestDto.getContent());
@@ -53,7 +54,6 @@ public class CommentController {
         user1.addComment(userComment);
         userComment.setUser(user1);
         userComment.setProfileImage(profileImage);
-        userPostService.updateCommentCount(userCommentRequestDto.getPostId());
         commentService.write_comment(userComment);
         List<UserComment> userComments = userPost.getUserComments();
         // 다른사람의 댓글만 알림
@@ -66,7 +66,10 @@ public class CommentController {
                     .message(userComment.getContent())
                     .build());
         }
-        return userComments;
+        UserListCommentsDto userListCommentsDto = new UserListCommentsDto();
+        userListCommentsDto.setCommentsDto(userComments);
+        userListCommentsDto.setNumberOfComments(userComments.size());
+        return userListCommentsDto;
     }
     private String getUserNicknameFromJwtToken(String token) {
         Base64.Decoder decoder = Base64.getDecoder();

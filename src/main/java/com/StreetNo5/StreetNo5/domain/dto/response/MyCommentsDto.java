@@ -1,4 +1,4 @@
-package com.StreetNo5.StreetNo5.domain.dto;
+package com.StreetNo5.StreetNo5.domain.dto.response;
 
 
 import lombok.Builder;

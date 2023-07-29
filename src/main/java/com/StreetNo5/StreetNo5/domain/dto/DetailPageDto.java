@@ -14,7 +14,7 @@ import java.util.List;
 public class DetailPageDto {
     private Long id;
     private Long viewCount=0L;
-    private Long commentCount=0L;
+    private int commentCount;
     private String content;
     private String imageUrl;
     private String address_name;
