@@ -9,6 +9,8 @@ import com.StreetNo5.StreetNo5.domain.dto.request.LoginForm;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdateNickname;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdatePassword;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserWithdrawal;
+import com.StreetNo5.StreetNo5.domain.dto.response.MyCommentsDto;
+import com.StreetNo5.StreetNo5.domain.dto.response.UserSliceCommentsDto;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -127,14 +129,14 @@ public class UserController {
     //내용 그림 시간
     @Operation(summary = "유저 댓글 받아오는 API",description = "게시물 + numberOfComments")
     @GetMapping("/my-page/comments")
-    public UserCommentsDto getUserComments(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
-                                           @RequestHeader(value = "Authorization") @Parameter(hidden = true) String token){
+    public UserSliceCommentsDto getUserComments(@PageableDefault(size = 6,sort = "modifiedDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable,
+                                                @RequestHeader(value = "Authorization") @Parameter(hidden = true) String token){
         String userNicknameFromJwtToken = getUserNicknameFromJwtToken(token);
         // todo jwt 검증후 return
         List<UserComment> userCommentsInfo = userService.getUserComments(userNicknameFromJwtToken);
         userCommentsInfo.sort(Comparator.comparing(UserComment::getModifiedDate).reversed());
         Slice<MyCommentsDto> MyCommentsDto = getUserCommentsDto(pageable, userCommentsInfo);
-        UserCommentsDto userCommentsDto = new UserCommentsDto();
+        UserSliceCommentsDto userCommentsDto = new UserSliceCommentsDto();
         userCommentsDto.setMyCommentsDto(MyCommentsDto);
         userCommentsDto.setNumberOfComments(userCommentsInfo.size());
         return userCommentsDto;

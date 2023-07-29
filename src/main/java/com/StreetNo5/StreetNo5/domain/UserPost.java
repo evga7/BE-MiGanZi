@@ -21,7 +21,6 @@ public class UserPost extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long viewCount=0L;
-    private Long commentCount=0L;
     @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
     private String content;
     private String detailImageUrl;
