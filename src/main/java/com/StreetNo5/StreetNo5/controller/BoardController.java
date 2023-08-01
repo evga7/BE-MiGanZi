@@ -93,6 +93,10 @@ public class BoardController {
     public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) throws IOException {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
+        if (userPost.getContent().length()<2 || userPost.getContent().length()>500)
+        {
+            return apiResponse.fail("내용은 2~500자 사이로 입력해주세요.");
+        }
         String detailImageUrl = gcsService.uploadDetailImage(userPost.getImageFile());
         String thumbnailImageUrl = gcsService.uploadThumbnailImage(userPost.getImageFile());
         UserPost post = UserPost.builder()

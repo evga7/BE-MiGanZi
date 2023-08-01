@@ -1,6 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
 import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class ErrorController {
     {
         return apiResponse.fail("이미지를 첨부해주세요.", HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> LessContentSizeException()
+    {
+        return apiResponse.fail("게시글은 2~500자 사이로 입력해주세요.", HttpStatus.BAD_REQUEST);
+    }
+
 
 }
