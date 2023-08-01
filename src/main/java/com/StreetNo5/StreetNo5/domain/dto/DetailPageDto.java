@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class DetailPageDto {
     private Long id;
-    private Long viewCount=0L;
+    private int viewCount;
     private int commentCount;
     private String content;
     private String imageUrl;

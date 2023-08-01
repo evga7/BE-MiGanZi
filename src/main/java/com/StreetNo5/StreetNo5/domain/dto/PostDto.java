@@ -11,7 +11,7 @@ import lombok.Setter;
 public class PostDto {
     private Long id;
     private String nickname;
-    private Long viewCount=0L;
+    private int viewCount;
     private String content;
     private String imageUrl;
     private String address_name;

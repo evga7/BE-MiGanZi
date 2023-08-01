@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,8 @@ public class UserPost extends BaseTimeEntity{
     @Column(name="post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long viewCount=0L;
+    @ColumnDefault("0")
+    private int viewCount;
     @Size(min = 2, max = 250,message = "내용은 2~500자 사이로 입력해주세요.")
     private String content;
     private String detailImageUrl;
