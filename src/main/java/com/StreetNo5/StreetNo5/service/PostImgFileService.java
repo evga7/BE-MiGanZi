@@ -59,6 +59,12 @@ public class PostImgFileService {
         BufferedImage inputImage = ImageIO.read(multipartFile.getInputStream());  // 받은 이미지 읽기
 
         BufferedImage outputImage = new BufferedImage(width, height, inputImage.getType());
+        int originWidth = inputImage.getWidth();
+        int originHeight = inputImage.getHeight();
+
+        // origin 이미지가 resizing될 사이즈보다 작을 경우 resizing 작업 안 함
+        if (originWidth < width && originHeight < height)
+            return multipartFile;
         // 입력받은 리사이즈 길이와 높이
 
         Graphics2D graphics2D = outputImage.createGraphics();
