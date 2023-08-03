@@ -25,7 +25,7 @@ public class GCSService {
         // !!!!!!!!!!!이미지 업로드 관련 부분!!!!!!!!!!!!!!!
         String ext = multipartFile.getContentType(); // 파일의 형식 ex) JPG
         /*MultipartFile detailImage = postImgFileService.resizeAttachment(multipartFile.getName(),"jpg" , multipartFile, 350, 467);*/
-        MultipartFile detailImage = postImgFileService.resize(multipartFile, "jpg", 350, 467);
+        MultipartFile detailImage = postImgFileService.resize(multipartFile, multipartFile.getContentType().substring(6), 350, 467);
         String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
         // Cloud에 이미지 업로드
         BlobInfo blobInfo = storage.create(
@@ -42,7 +42,7 @@ public class GCSService {
         // !!!!!!!!!!!이미지 업로드 관련 부분!!!!!!!!!!!!!!!
         String ext = multipartFile.getContentType(); // 파일의 형식 ex) JPG
         /*MultipartFile thumbnailImage = postImgFileService.resizeAttachment(multipartFile.getName(),"jpg" , multipartFile, 126, 169);*/
-        MultipartFile thumbnailImage = postImgFileService.resize(multipartFile, "jpg", 126, 169);
+        MultipartFile thumbnailImage = postImgFileService.resize(multipartFile, multipartFile.getContentType().substring(6), 126, 169);
 
         String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
         // Cloud에 이미지 업로드
