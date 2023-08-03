@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class PostImgFileService {
                                            int targetWidth, int targetHeight) {
         try {
             // MultipartFile -> BufferedImage Convert
+
             BufferedImage image = ImageIO.read(multipartFile.getInputStream());
 
             // 원하는 px로 Width와 Height 수정
@@ -51,4 +53,22 @@ public class PostImgFileService {
         }
     }
 
+    public MultipartFile resize(MultipartFile multipartFile,String fileFormatName,int width, int height)
+            throws IOException {
+
+        BufferedImage inputImage = ImageIO.read(multipartFile.getInputStream());  // 받은 이미지 읽기
+
+        BufferedImage outputImage = new BufferedImage(width, height, inputImage.getType());
+        // 입력받은 리사이즈 길이와 높이
+
+        Graphics2D graphics2D = outputImage.createGraphics();
+        graphics2D.drawImage(inputImage, 0, 0, width, height, null); // 그리기
+        graphics2D.dispose(); // 자원해제
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(outputImage, fileFormatName, baos);
+        baos.flush();
+
+        return new MockMultipartFile(multipartFile.getName(), baos.toByteArray());
+    }
 }
+
