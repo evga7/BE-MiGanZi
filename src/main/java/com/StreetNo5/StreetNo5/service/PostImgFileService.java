@@ -66,6 +66,8 @@ public class PostImgFileService {
         graphics2D.dispose(); // 자원해제
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(outputImage, fileFormatName, baos);
+        inputImage.flush();
+        outputImage.flush();
         baos.flush();
 
         return new MockMultipartFile(multipartFile.getName(), baos.toByteArray());
