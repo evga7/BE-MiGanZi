@@ -4,7 +4,10 @@ package com.StreetNo5.StreetNo5.controller;
 import com.StreetNo5.StreetNo5.domain.User;
 import com.StreetNo5.StreetNo5.domain.UserComment;
 import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.*;
+import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
+import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
+import com.StreetNo5.StreetNo5.domain.dto.UserWritesDto;
 import com.StreetNo5.StreetNo5.domain.dto.request.LoginForm;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdateNickname;
 import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdatePassword;
@@ -15,6 +18,7 @@ import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,12 +26,11 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class UserController {
 
     private final UserService userService;
     private final PubSubController pubSubController;
+    private final ApiResponse apiResponse;
 
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
@@ -46,12 +50,24 @@ public class UserController {
 
     @Operation(summary = "회원가입 API")
     @PostMapping("/signup")
-    public Long signup(SignupForm signupForm) {
+    public ResponseEntity<?> signup(@Valid SignupForm signupForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            Map<String, String> errorMap = new HashMap<>();
+
+            for(FieldError error : bindingResult.getFieldErrors()) {
+                errorMap.put("valid_"+error.getField(), error.getDefaultMessage());
+            }
+
+            return apiResponse.fail(errorMap);
+        }
         Long signup = userService.signup(signupForm);
+        if (signup==-1L){
+            return apiResponse.fail("중복된 유저입니다.");
+        }
         if (signupForm.getNickname().equals(signupForm.getNickname())){
             pubSubController.createRoom(signupForm.getNickname());
         }
-        return signup;
+        return apiResponse.success("회원가입에 성공했습니다.");
     }
 
     @Operation(summary = "닉네임 변경 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")

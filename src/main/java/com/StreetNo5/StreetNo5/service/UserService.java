@@ -126,7 +126,7 @@ public class UserService {
         boolean check = checkNickNameExists(signupForm.getNickname());
 
         if (check) {
-            throw new IllegalArgumentException("이미 존재하는 유저입니다.");
+            return -1L;
         }
 
         String encPwd = encoder.encode(signupForm.getPassword());

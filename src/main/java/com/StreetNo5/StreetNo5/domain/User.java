@@ -30,6 +30,7 @@ public class User extends BaseTimeEntity{
     private String nickname;
     @NotNull
     private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
