@@ -97,8 +97,18 @@ public class UserController {
 
     @Operation(summary = "비밀번호 변경 API",description = "요청값 accessToken 이며 만료된 액세스 토큰으로 요청시 거부합니다.")
     @PostMapping("/update-password")
-    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token, UserUpdatePassword userUpdatePassword)
+    public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") @Parameter(hidden = true) String token, @Valid UserUpdatePassword userUpdatePassword
+    ,BindingResult bindingResult)
     {
+        if (bindingResult.hasErrors()){
+            Map<String, String> errorMap = new HashMap<>();
+
+            for(FieldError error : bindingResult.getFieldErrors()) {
+                errorMap.put("valid_"+error.getField(), error.getDefaultMessage());
+            }
+
+            return apiResponse.fail(errorMap);
+        }
         return userService.changePassword(token.substring(7),userUpdatePassword.getNewPassword());
     }
 
