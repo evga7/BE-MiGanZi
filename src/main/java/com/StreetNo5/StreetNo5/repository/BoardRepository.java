@@ -18,6 +18,9 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
     @Query(value = "select * from user_post order by view_count desc limit 5",nativeQuery = true)
     List<UserPost> findPolarPost();
 
+    @Query(value = "select u from UserPost u left join fetch u.user" )
+    List<UserPost> findAllPostFetchJoin();
+
     List<UserPost> findByUser_Nickname(String nickname);
 
 
