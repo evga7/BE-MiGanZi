@@ -13,7 +13,7 @@ import java.util.Optional;
 public class UserPostService {
     private final BoardRepository boardRepository;
     public List<UserPost> getUserPosts(){
-        return boardRepository.findAll();
+        return boardRepository.findAllPostFetchJoin();
     }
     public UserPost getUserPost(Long id){
         Optional<UserPost> byId = boardRepository.findById(id);
