@@ -15,7 +15,7 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
     @Query(value = "update user_post p set p.view_count = p.view_count + 1 where p.post_id=:id",nativeQuery = true)
     void updatePageView(@Param("id") Long id);
 
-    @Query(value = "select * from user_post order by view_count desc limit 5",nativeQuery = true)
+    @Query(value = "select u from UserPost u left join fetch u.user order by u.viewCount desc limit 5")
     List<UserPost> findPolarPost();
 
     @Query(value = "select u from UserPost u left join fetch u.user" )
