@@ -1,7 +1,7 @@
 package com.StreetNo5.StreetNo5.controller;
 
-import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
+import com.StreetNo5.StreetNo5.entity.UserPost;
+import com.StreetNo5.StreetNo5.entity.dto.PostsDto;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

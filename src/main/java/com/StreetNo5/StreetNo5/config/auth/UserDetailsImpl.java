@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.config.auth;
 
-import com.StreetNo5.StreetNo5.domain.User;
+import com.StreetNo5.StreetNo5.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

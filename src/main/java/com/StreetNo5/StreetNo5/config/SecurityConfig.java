@@ -2,8 +2,8 @@ package com.StreetNo5.StreetNo5.config;
 
 
 import com.StreetNo5.StreetNo5.config.auth.UserDetailsServiceImpl;
-import com.StreetNo5.StreetNo5.config.jwt.JwtAuthenticationFilter;
-import com.StreetNo5.StreetNo5.config.jwt.JwtExceptionFilter;
+import com.StreetNo5.StreetNo5.jwt.JwtAuthenticationFilter;
+import com.StreetNo5.StreetNo5.jwt.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

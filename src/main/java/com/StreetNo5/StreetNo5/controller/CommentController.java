@@ -1,17 +1,17 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
-import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
-import com.StreetNo5.StreetNo5.config.redis.UserAlert;
-import com.StreetNo5.StreetNo5.domain.User;
-import com.StreetNo5.StreetNo5.domain.UserComment;
-import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.request.UserCommentRequestDto;
-import com.StreetNo5.StreetNo5.domain.dto.response.UserListCommentsDto;
+import com.StreetNo5.StreetNo5.jwt.JwtTokenProvider;
+import com.StreetNo5.StreetNo5.redis.UserAlert;
+import com.StreetNo5.StreetNo5.entity.User;
+import com.StreetNo5.StreetNo5.entity.UserComment;
+import com.StreetNo5.StreetNo5.entity.UserPost;
+import com.StreetNo5.StreetNo5.entity.dto.request.UserCommentRequestDto;
+import com.StreetNo5.StreetNo5.entity.dto.response.UserListCommentsDto;
 import com.StreetNo5.StreetNo5.service.CommentService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
-import com.StreetNo5.StreetNo5.service.redis.RedisService;
+import com.StreetNo5.StreetNo5.redis.service.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

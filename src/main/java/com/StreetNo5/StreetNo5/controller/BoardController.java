@@ -1,14 +1,14 @@
 package com.StreetNo5.StreetNo5.controller;
 
-import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
-import com.StreetNo5.StreetNo5.domain.User;
-import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
-import com.StreetNo5.StreetNo5.domain.dto.DetailPageDto;
-import com.StreetNo5.StreetNo5.domain.dto.PostDto;
-import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
-import com.StreetNo5.StreetNo5.domain.dto.request.UserPostRequestDto;
-import com.StreetNo5.StreetNo5.service.GCSService;
+import com.StreetNo5.StreetNo5.entity.User;
+import com.StreetNo5.StreetNo5.entity.UserPost;
+import com.StreetNo5.StreetNo5.entity.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.entity.dto.DetailPageDto;
+import com.StreetNo5.StreetNo5.entity.dto.PostDto;
+import com.StreetNo5.StreetNo5.entity.dto.PostsDto;
+import com.StreetNo5.StreetNo5.entity.dto.request.UserPostRequestDto;
+import com.StreetNo5.StreetNo5.infra.gcs.GCSService;
+import com.StreetNo5.StreetNo5.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

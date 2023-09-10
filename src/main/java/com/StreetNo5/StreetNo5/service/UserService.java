@@ -1,17 +1,17 @@
 package com.StreetNo5.StreetNo5.service;
 
 
-import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
-import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
-import com.StreetNo5.StreetNo5.domain.User;
-import com.StreetNo5.StreetNo5.domain.UserComment;
-import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
-import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
-import com.StreetNo5.StreetNo5.domain.dto.UserResponseDto;
+import com.StreetNo5.StreetNo5.entity.User;
+import com.StreetNo5.StreetNo5.entity.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.entity.UserComment;
+import com.StreetNo5.StreetNo5.entity.UserPost;
+import com.StreetNo5.StreetNo5.entity.dto.SignupForm;
+import com.StreetNo5.StreetNo5.entity.dto.UserResponseDto;
+import com.StreetNo5.StreetNo5.jwt.JwtTokenProvider;
 import com.StreetNo5.StreetNo5.lib.Helper;
+import com.StreetNo5.StreetNo5.redis.RefreshToken;
+import com.StreetNo5.StreetNo5.redis.service.RedisService;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
-import com.StreetNo5.StreetNo5.service.redis.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

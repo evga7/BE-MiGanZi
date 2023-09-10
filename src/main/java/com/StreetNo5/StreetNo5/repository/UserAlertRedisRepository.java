@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.repository;
 
-import com.StreetNo5.StreetNo5.config.redis.UserAlert;
+import com.StreetNo5.StreetNo5.redis.UserAlert;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.repository.CrudRepository;
 

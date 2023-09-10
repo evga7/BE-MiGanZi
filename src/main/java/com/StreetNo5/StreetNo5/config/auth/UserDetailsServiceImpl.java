@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.config.auth;
 
-import com.StreetNo5.StreetNo5.domain.User;
+import com.StreetNo5.StreetNo5.entity.User;
 import com.StreetNo5.StreetNo5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.AuthorityUtils;
