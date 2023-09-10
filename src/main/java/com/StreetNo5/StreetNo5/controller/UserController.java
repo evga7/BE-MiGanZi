@@ -1,19 +1,19 @@
 package com.StreetNo5.StreetNo5.controller;
 
 
-import com.StreetNo5.StreetNo5.domain.User;
-import com.StreetNo5.StreetNo5.domain.UserComment;
-import com.StreetNo5.StreetNo5.domain.UserPost;
-import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
-import com.StreetNo5.StreetNo5.domain.dto.PostsDto;
-import com.StreetNo5.StreetNo5.domain.dto.SignupForm;
-import com.StreetNo5.StreetNo5.domain.dto.UserWritesDto;
-import com.StreetNo5.StreetNo5.domain.dto.request.LoginForm;
-import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdateNickname;
-import com.StreetNo5.StreetNo5.domain.dto.request.UserUpdatePassword;
-import com.StreetNo5.StreetNo5.domain.dto.request.UserWithdrawal;
-import com.StreetNo5.StreetNo5.domain.dto.response.MyCommentsDto;
-import com.StreetNo5.StreetNo5.domain.dto.response.UserSliceCommentsDto;
+import com.StreetNo5.StreetNo5.entity.User;
+import com.StreetNo5.StreetNo5.entity.UserComment;
+import com.StreetNo5.StreetNo5.entity.UserPost;
+import com.StreetNo5.StreetNo5.entity.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.entity.dto.PostsDto;
+import com.StreetNo5.StreetNo5.entity.dto.SignupForm;
+import com.StreetNo5.StreetNo5.entity.dto.UserWritesDto;
+import com.StreetNo5.StreetNo5.entity.dto.request.LoginForm;
+import com.StreetNo5.StreetNo5.entity.dto.request.UserUpdateNickname;
+import com.StreetNo5.StreetNo5.entity.dto.request.UserUpdatePassword;
+import com.StreetNo5.StreetNo5.entity.dto.request.UserWithdrawal;
+import com.StreetNo5.StreetNo5.entity.dto.response.MyCommentsDto;
+import com.StreetNo5.StreetNo5.entity.dto.response.UserSliceCommentsDto;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

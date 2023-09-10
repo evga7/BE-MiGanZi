@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.repository;
 
-import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.entity.UserPost;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

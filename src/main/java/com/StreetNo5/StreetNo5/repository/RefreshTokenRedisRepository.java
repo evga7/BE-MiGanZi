@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.repository;
 
-import com.StreetNo5.StreetNo5.config.redis.RefreshToken;
+import com.StreetNo5.StreetNo5.redis.RefreshToken;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,15 +1,15 @@
 package com.StreetNo5.StreetNo5.controller;
 
-import com.StreetNo5.StreetNo5.config.jwt.JwtTokenProvider;
-import com.StreetNo5.StreetNo5.config.redis.UserAlert;
-import com.StreetNo5.StreetNo5.domain.User;
-import com.StreetNo5.StreetNo5.domain.dto.ApiResponse;
-import com.StreetNo5.StreetNo5.domain.dto.RoomMessage;
-import com.StreetNo5.StreetNo5.domain.dto.UserAlertDto;
+import com.StreetNo5.StreetNo5.entity.User;
+import com.StreetNo5.StreetNo5.entity.dto.ApiResponse;
+import com.StreetNo5.StreetNo5.entity.dto.RoomMessage;
+import com.StreetNo5.StreetNo5.entity.dto.UserAlertDto;
+import com.StreetNo5.StreetNo5.jwt.JwtTokenProvider;
+import com.StreetNo5.StreetNo5.redis.UserAlert;
+import com.StreetNo5.StreetNo5.redis.service.RedisPublisher;
+import com.StreetNo5.StreetNo5.redis.service.RedisSubscriber;
 import com.StreetNo5.StreetNo5.repository.UserAlertRedisRepository;
 import com.StreetNo5.StreetNo5.service.UserService;
-import com.StreetNo5.StreetNo5.service.redis.RedisPublisher;
-import com.StreetNo5.StreetNo5.service.redis.RedisSubscriber;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;

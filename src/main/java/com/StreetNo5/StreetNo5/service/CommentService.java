@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.service;
 
-import com.StreetNo5.StreetNo5.domain.UserComment;
+import com.StreetNo5.StreetNo5.entity.UserComment;
 import com.StreetNo5.StreetNo5.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.StreetNo5.StreetNo5.service;
 
-import com.StreetNo5.StreetNo5.domain.UserPost;
+import com.StreetNo5.StreetNo5.entity.UserPost;
 import com.StreetNo5.StreetNo5.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
