@@ -67,9 +67,10 @@ public class PostImgFileService {
         if (originWidth < width && originHeight < height)
             return multipartFile;
         // 입력받은 리사이즈 길이와 높이
-
+        Image scaledInstance = outputImage.getScaledInstance(width, height, Image.SCALE_FAST);
         Graphics2D graphics2D = outputImage.createGraphics();
-        graphics2D.drawImage(inputImage, 0, 0, width, height, null); // 그리기
+        /*graphics2D.drawImage(inputImage, 0, 0, width, height, null); // 그리기*/
+        graphics2D.drawImage(scaledInstance, 0, 0, width, height, null); // 그리기
         graphics2D.dispose(); // 자원해제
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(outputImage, fileFormatName, baos);
