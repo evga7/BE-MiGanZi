@@ -44,6 +44,7 @@ public class PostImgFileService {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(imageNoAlpha, fileFormatName, baos);
             baos.flush();
+            baos.close();
 
             return new MockMultipartFile(fileName, baos.toByteArray());
 
@@ -75,6 +76,7 @@ public class PostImgFileService {
         inputImage.flush();
         outputImage.flush();
         baos.flush();
+        baos.close();
 
         return new MockMultipartFile(multipartFile.getName(), baos.toByteArray());
     }
