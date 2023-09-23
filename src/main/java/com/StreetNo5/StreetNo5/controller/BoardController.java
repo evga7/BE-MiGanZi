@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 
 @Slf4j
 @RestController
@@ -90,15 +91,44 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성 API")
     @PostMapping("/post/write")
-    public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) throws IOException {
+    public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) throws InterruptedException, ExecutionException {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
         if (userPost.getContent().length()<2 || userPost.getContent().length()>500)
         {
             return apiResponse.fail("내용은 2~500자 사이로 입력해주세요.");
         }
-        String detailImageUrl = gcsService.uploadDetailImage(userPost.getImageFile());
-        String thumbnailImageUrl = gcsService.uploadThumbnailImage(userPost.getImageFile());
+        ExecutorService executorService = Executors.newFixedThreadPool(2); // 스레드 풀 크기
+
+        // 이미지 리사이즈 작업을 병렬로 처리할 Callable 목록을 생성
+        List<Callable<String>> resizeTasks = new ArrayList<>();
+
+        // detail 이미지 리사이즈 작업 Callable
+        Callable<String> detailResizeTask = () -> {
+            try {
+                return gcsService.uploadDetailImage(userPost.getImageFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        resizeTasks.add(detailResizeTask);
+
+        // thumbnail 이미지 리사이즈 작업 Callable
+        Callable<String> thumbnailResizeTask = () -> {
+            try {
+                return gcsService.uploadThumbnailImage(userPost.getImageFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        resizeTasks.add(thumbnailResizeTask);
+
+        // 이미지 리사이즈 작업을 병렬로 실행후 결과
+        List<Future<String>> results = executorService.invokeAll(resizeTasks);
+
+        String detailImageUrl = results.get(0).get();
+        String thumbnailImageUrl = results.get(1).get();
+
         UserPost post = UserPost.builder()
                 .content(userPost.getContent())
                 .detailImageUrl(detailImageUrl)
