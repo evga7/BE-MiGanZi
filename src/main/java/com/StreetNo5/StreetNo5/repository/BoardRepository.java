@@ -21,6 +21,11 @@ public interface BoardRepository extends JpaRepository<UserPost,Long> {
     @Query(value = "select u from UserPost u left join fetch u.user" )
     List<UserPost> findAllPostFetchJoin();
 
+    @Transactional
+    @Modifying
+    @Query(value = "update user_post p set p.profile_image =:newImageUrl and p.thumbnail_image=:newThumbnailUrl where p.post_id=:id",nativeQuery = true)
+    void updatePostImageUrl(@Param("newImageUrl") String ImageUrl, @Param("newThumbnailUrl") String ThumbUrl ,@Param("id") Long id);
+
     List<UserPost> findByUser_Nickname(String nickname);
 
 
