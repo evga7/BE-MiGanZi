@@ -7,8 +7,8 @@ import com.StreetNo5.StreetNo5.entity.dto.DetailPageDto;
 import com.StreetNo5.StreetNo5.entity.dto.PostDto;
 import com.StreetNo5.StreetNo5.entity.dto.PostsDto;
 import com.StreetNo5.StreetNo5.entity.dto.request.UserPostRequestDto;
-import com.StreetNo5.StreetNo5.infra.gcs.GCSService;
 import com.StreetNo5.StreetNo5.jwt.JwtTokenProvider;
+import com.StreetNo5.StreetNo5.service.ImageService;
 import com.StreetNo5.StreetNo5.service.UserPostService;
 import com.StreetNo5.StreetNo5.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,12 +26,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Slf4j
 @RestController
@@ -41,9 +42,11 @@ public class BoardController {
 
     private final ApiResponse apiResponse;
     private final UserPostService userPostService;
-    private final GCSService gcsService;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ImageService imageService;
+    @Value("${gcp.bucket.url}")
+    private String bucketUrl;
     @Value("${profile.image.url}")
     private String profileImage;
 
@@ -89,50 +92,24 @@ public class BoardController {
                 .build();
     }
 
+
+
     @Operation(summary = "게시글 작성 API")
-    @PostMapping("/post/write")
-    public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) throws InterruptedException, ExecutionException {
+    @PostMapping("/write")
+    public ResponseEntity<?> writePost(UserPostRequestDto userPost, HttpServletRequest httpServletRequest) {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String nickname = getUserNicknameFromJwtToken(token);
-        if (userPost.getContent().length()<2 || userPost.getContent().length()>500)
-        {
+        if (userPost.getContent().length() < 2 || userPost.getContent().length() > 500) {
             return apiResponse.fail("내용은 2~500자 사이로 입력해주세요.");
         }
-        ExecutorService executorService = Executors.newFixedThreadPool(2); // 스레드 풀 크기
 
-        // 이미지 리사이즈 작업을 병렬로 처리할 Callable 목록을 생성
-        List<Callable<String>> resizeTasks = new ArrayList<>();
-
-        // detail 이미지 리사이즈 작업 Callable
-        Callable<String> detailResizeTask = () -> {
-            try {
-                return gcsService.uploadDetailImage(userPost.getImageFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        resizeTasks.add(detailResizeTask);
-
-        // thumbnail 이미지 리사이즈 작업 Callable
-        Callable<String> thumbnailResizeTask = () -> {
-            try {
-                return gcsService.uploadThumbnailImage(userPost.getImageFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        resizeTasks.add(thumbnailResizeTask);
-
-        // 이미지 리사이즈 작업을 병렬로 실행후 결과
-        List<Future<String>> results = executorService.invokeAll(resizeTasks);
-
-        String detailImageUrl = results.get(0).get();
-        String thumbnailImageUrl = results.get(1).get();
+        // 기본 이미지 URL 설정
+        String uploadingImageUrl = bucketUrl+"uploading.png";
 
         UserPost post = UserPost.builder()
                 .content(userPost.getContent())
-                .detailImageUrl(detailImageUrl)
-                .thumbnailImageUrl(thumbnailImageUrl)
+                .detailImageUrl(uploadingImageUrl)
+                .thumbnailImageUrl(uploadingImageUrl)
                 .lat(userPost.getLat())
                 .lng(userPost.getLng())
                 .tags(userPost.getTags())
@@ -142,15 +119,36 @@ public class BoardController {
                 .music_id(userPost.getMusic_id())
                 .build();
         Optional<User> user = userService.findUser(nickname);
-        if (!user.isPresent()){
+        if (!user.isPresent()) {
             return apiResponse.fail("유저 에러", HttpStatus.BAD_REQUEST);
         }
         User user1 = user.get();
         user1.addPost(post);
         post.setUser(user.get());
         userPostService.writePost(post);
-        return apiResponse.success("성공",HttpStatus.ACCEPTED);
+
+        // 비동기로 이미지 리사이즈 작업 수행
+        Future<String> detailImageFuture = imageService.resizeAndUploadDetailImage(userPost.getImageFile());
+        Future<String> thumbnailImageFuture = imageService.resizeAndUploadThumbnailImage(userPost.getImageFile());
+
+        // 리사이즈된 이미지 URL로 업데이트
+        CompletableFuture.runAsync(() -> {
+            try {
+                String detailImageUrl = detailImageFuture.get();
+                String thumbnailImageUrl = thumbnailImageFuture.get();
+
+                post.setDetailImageUrl(detailImageUrl);
+                post.setThumbnailImageUrl(thumbnailImageUrl);
+                userPostService.writePost(post); // DB 업데이트
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return apiResponse.success("성공", HttpStatus.ACCEPTED);
     }
+
 
 
 

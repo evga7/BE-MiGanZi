@@ -122,6 +122,7 @@ public class UserService {
         return response.success("회원탈퇴 되었습니다.",HttpStatus.ACCEPTED);
     }
 
+    @Transactional
     public Long signup(SignupForm signupForm) {
         boolean check = checkNickNameExists(signupForm.getNickname());
 
@@ -181,6 +182,8 @@ public class UserService {
 
         return response.fail("토큰 갱신에 실패했습니다.",HttpStatus.BAD_REQUEST);
     }
+
+    @Transactional
     public ResponseEntity<?> changePassword(String token,String newPassword){
         if (jwtTokenProvider.validateToken(token)){
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -197,10 +200,12 @@ public class UserService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<UserPost> getUserPosts(String nickname){
         Optional<User> byNickname = userRepository.findByNickname(nickname);
         return byNickname.get().getUserPosts();
     }
+    @Transactional(readOnly = true)
     public List<UserComment> getUserComments(String nickname){
         Optional<User> byNickname = userRepository.findByNickname(nickname);
         return byNickname.get().getUserComments();
