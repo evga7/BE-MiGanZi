@@ -43,6 +43,9 @@ public class UserPost extends BaseTimeEntity{
         userComments.add(userComment);
         userComment.setUserPost(this);
     }
+    public void increase(){
+        this.viewCount+=1;
+    }
 
     @OneToMany(mappedBy = "userPost",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonManagedReference
@@ -52,8 +55,6 @@ public class UserPost extends BaseTimeEntity{
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
-
 
 
 }
