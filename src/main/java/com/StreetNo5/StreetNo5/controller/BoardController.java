@@ -71,10 +71,10 @@ public class BoardController {
     }
 
     @Operation(summary = "게시물 번호를 이용한 게시물 조회 API")
-    @GetMapping("/{id}")
-    public DetailPageDto getPost(@PathVariable Long id) {
-        UserPost userPost = userPostService.getUserPost(id);
-        userPostService.updateView(id);
+    @GetMapping("/{postId}")
+    public DetailPageDto getPost(@PathVariable Long postId) {
+        UserPost userPost = userPostService.getUserPost(postId);
+        userPostService.increasePostViewCount(postId);
         return DetailPageDto.builder()
                 .id(userPost.getId())
                 .viewCount(userPost.getViewCount())
@@ -91,7 +91,6 @@ public class BoardController {
                 .modifiedDate(userPost.getModifiedDate())
                 .build();
     }
-
 
 
     @Operation(summary = "게시글 작성 API")

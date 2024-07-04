@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -35,12 +36,12 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     private final UserService userService;
     private final PubSubController pubSubController;
     private final ApiResponse apiResponse;
-
     @Operation(summary = "로그인 API")
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest request, LoginForm loginForm) {

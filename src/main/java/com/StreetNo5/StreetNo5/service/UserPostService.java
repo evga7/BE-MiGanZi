@@ -1,5 +1,6 @@
 package com.StreetNo5.StreetNo5.service;
 
+import com.StreetNo5.StreetNo5.aspect.PreventDuplicateSubmit;
 import com.StreetNo5.StreetNo5.entity.UserPost;
 import com.StreetNo5.StreetNo5.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,19 @@ public class UserPostService {
     {
         boardRepository.updatePageView(id);
     }
+    public void increasePostViewCount(Long id)
+    {
+        UserPost userPost = boardRepository.findById(id).orElseThrow();
+        userPost.increase();
+        boardRepository.save(userPost);
+    }
+    @PreventDuplicateSubmit(key = "#postId")
+    public void redissonIncreasePostViewCount(Long postId)
+    {
+        UserPost userPost = boardRepository.findById(postId).orElseThrow();
+        userPost.increase();
+        boardRepository.save(userPost);
+    }
     @Transactional
     public void writePost(UserPost userPost){
         boardRepository.save(userPost);
@@ -44,4 +58,5 @@ public class UserPostService {
     public List<UserPost>getUserPolarPost(){
         return boardRepository.findPolarPost();
     }
+
 }
