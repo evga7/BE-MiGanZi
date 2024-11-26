@@ -23,26 +23,19 @@ public class UserFindPostController {
     private final UserPostService userPostService;
 
     @Operation(summary = "주변 게시물 찾기 API")
-    @GetMapping("/find-near-post/{lat}/{lng}/{tags}")
+    @GetMapping("/find-near-post2/{lat}/{lng}/{tags}")
     public Slice<PostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable
-    , @PathVariable Double lat, @PathVariable Double lng, @PathVariable String tags) {
-        List<UserPost> userPostData= userPostService.getUserPostList();
+            , @PathVariable Double lat, @PathVariable Double lng, @PathVariable String tags) {
+        Long tagsNum = convertTags(tags);
+        List<UserPost> userPostData = userPostService.getNearPostList(lng, lat, tagsNum);
         List<UserPost> userPostList = new ArrayList<>();
-        Long tags_num=convertTags(tags);
         for (int i=0;i<userPostData.size();i++){
             if (getDistance(lat,lng,userPostData.get(i).getLat(),userPostData.get(i).getLng())<=5
-                    && ((tags_num&userPostData.get(i).getTagsNum()))==tags_num){
+                    && ((tagsNum&userPostData.get(i).getTagsNum()))==tagsNum){
                 userPostList.add(userPostData.get(i));
             }
         }
         return getUserPostsDto(pageable,userPostList);
-    }
-    @Operation(summary = "주변 게시물 찾기 API")
-    @GetMapping("/find-near-post2/{lat}/{lng}/{tags}")
-    public List<UserPost> getBoardListFromUserSearch2(@PathVariable Double lat, @PathVariable Double lng, @PathVariable String tags) {
-        Long tagsNum = convertTags(tags);
-        List<UserPost> userPosts = userPostService.getNearPostList(lng, lat, tagsNum);
-        return userPosts;
     }
 
     // km 기준
