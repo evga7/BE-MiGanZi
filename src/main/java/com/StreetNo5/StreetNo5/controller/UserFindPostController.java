@@ -23,7 +23,7 @@ public class UserFindPostController {
     private final UserPostService userPostService;
 
     @Operation(summary = "주변 게시물 찾기 API")
-    @GetMapping("/find-near-post2/{lat}/{lng}/{tags}")
+    @GetMapping("/find-near-post/{lat}/{lng}/{tags}")
     public Slice<PostsDto> getBoardListFromUserSearch(@PageableDefault(size = 6,sort = "createdDate",direction = Sort.Direction.DESC) @Parameter(hidden = true) Pageable pageable
             , @PathVariable Double lat, @PathVariable Double lng, @PathVariable String tags) {
         Long tagsNum = convertTags(tags);
