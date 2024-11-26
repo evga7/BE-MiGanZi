@@ -50,6 +50,11 @@ public class UserPostService {
     public void updatePost(UserPost userPost){
         boardRepository.updatePostImageUrl(userPost.getDetailImageUrl(), userPost.getThumbnailImageUrl(), userPost.getId());
     }
+
+    @Transactional(readOnly = true)
+    public List<UserPost> getNearPostList(Double lng, Double lat, Long tagsNum){
+        return boardRepository.findNearPosts(lng,lat,tagsNum);
+    }
     @Transactional(readOnly = true)
     public List<UserPost>getUserPostList(){
         return boardRepository.findAll();
